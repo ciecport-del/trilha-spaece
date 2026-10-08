@@ -732,161 +732,59 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       </div>
     </div>
 
-    <!-- VIEW: Profile Selector Screen (Tela Inicial Principal) -->
-    <div id="view-profile-select" class="warm-card shell-fade" style="display:block; max-width:920px; margin:0.75rem auto 1.5rem auto; padding:1.75rem 1.5rem; border-top:5px solid #0f4c81;">
-      <div style="text-align:center; max-width:680px; margin:0 auto 1.25rem auto;">
-        <span class="shell-badge" style="background:#fef3c7; color:#92400e; font-weight:800; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em;">Acesso ao Sistema SPAECE 80/20</span>
-        <h2 style="font-size:1.75rem; font-weight:800; color:#0f284e; margin:0.4rem 0 0.25rem 0;">Quem está acessando?</h2>
-        <p style="color:#475569; font-size:0.95rem; margin:0;">
-          Selecione o seu perfil para abrir imediatamente o ambiente correspondente da Escola de Cidadania Francisco Carlos de Pinho:
+    <!-- VIEW: LOGIN OBRIGATÓRIO (NENHUM NOME OU PAINEL EXPOSTO) -->
+    <div id="view-profile-select" class="warm-card shell-fade" style="display:block; max-width:480px; margin:2rem auto; padding:2rem 1.5rem; border-top:5px solid #0f4c81; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+      <div style="text-align:center; margin-bottom:1.5rem;">
+        <span class="shell-badge" style="background:#0f4c81; color:#ffffff; font-weight:800; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; padding:0.35rem 0.75rem;">
+          🔒 Acesso Restrito ao Sistema
+        </span>
+        <h2 style="font-size:1.5rem; font-weight:800; color:#0f284e; margin:0.6rem 0 0.3rem 0;">Identificação de Usuário</h2>
+        <p style="color:#475569; font-size:0.88rem; margin:0; line-height:1.45;">
+          Digite sua matrícula (aluno) ou seu nome de usuário (equipe) e sua senha individual para acessar o sistema.
         </p>
       </div>
 
-      <!-- Grade 2x2 no Desktop / 1 Coluna no Mobile: 4 Perfis Claros e Visíveis -->
-      <div class="profiles-select-grid">
-        
-        <!-- 1. ALUNO -->
-        <button type="button" class="profile-card-btn pcard-aluno" onclick="app.promptStudentSelect()">
-          <div class="picon">🎓</div>
-          <div style="flex:1;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:1.15rem; font-weight:800; color:#0369a1; letter-spacing:-0.01em;">1. ALUNO</span>
-              <span class="shell-badge" style="background:#0284c7; color:#fff; font-weight:700; font-size:0.7rem;">9º Ano</span>
-            </div>
-            <p style="font-size:0.88rem; color:#1e293b; margin:0.35rem 0 0 0; line-height:1.35; font-weight:500;">
-              Ver a trilha do dia e responder as atividades
-            </p>
-            <div style="font-size:0.75rem; color:#0284c7; font-weight:700; margin-top:0.4rem; display:flex; align-items:center; gap:0.25rem;">
-              <span>Selecionar entre os 20 alunos</span> →
-            </div>
-          </div>
-        </button>
-
-        <!-- 2. PROFESSOR -->
-        <button type="button" class="profile-card-btn pcard-professor" onclick="app.setProfile('professor')">
-          <div class="picon">👨‍🏫</div>
-          <div style="flex:1;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:1.15rem; font-weight:800; color:#92400e; letter-spacing:-0.01em;">2. PROFESSOR</span>
-              <span class="shell-badge" style="background:#d97706; color:#fff; font-weight:700; font-size:0.7rem;">Ary Gomes</span>
-            </div>
-            <p style="font-size:0.88rem; color:#1e293b; margin:0.35rem 0 0 0; line-height:1.35; font-weight:500;">
-              Liberar dias, ver roteiro e acompanhar o rendimento
-            </p>
-            <div style="font-size:0.75rem; color:#92400e; font-weight:700; margin-top:0.4rem; display:flex; align-items:center; gap:0.25rem;">
-              <span>Entrar como Prof. Ary Gomes (LP)</span> →
-            </div>
-          </div>
-        </button>
-
-        <!-- 3. COORDENADOR -->
-        <button type="button" class="profile-card-btn pcard-coordenador" onclick="app.setProfile('coordenador')">
-          <div class="picon">📋</div>
-          <div style="flex:1;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:1.15rem; font-weight:800; color:#166534; letter-spacing:-0.01em;">3. COORDENADOR</span>
-              <span class="shell-badge" style="background:#15803d; color:#fff; font-weight:700; font-size:0.7rem;">Iran Gonçalves</span>
-            </div>
-            <p style="font-size:0.88rem; color:#1e293b; margin:0.35rem 0 0 0; line-height:1.35; font-weight:500;">
-              Panorama da escola e descritores críticos
-            </p>
-            <div style="font-size:0.75rem; color:#166534; font-weight:700; margin-top:0.4rem; display:flex; align-items:center; gap:0.25rem;">
-              <span>Entrar como Iran Gonçalves (Coord.)</span> →
-            </div>
-          </div>
-        </button>
-
-        <!-- 4. DIRETOR -->
-        <button type="button" class="profile-card-btn pcard-diretor" onclick="app.setProfile('diretor')">
-          <div class="picon">🏫</div>
-          <div style="flex:1;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:1.15rem; font-weight:800; color:#5b21b6; letter-spacing:-0.01em;">4. DIRETOR</span>
-              <span class="shell-badge" style="background:#7c3aed; color:#fff; font-weight:700; font-size:0.7rem;">Marcos Costa</span>
-            </div>
-            <p style="font-size:0.88rem; color:#1e293b; margin:0.35rem 0 0 0; line-height:1.35; font-weight:500;">
-              Visão geral da unidade
-            </p>
-            <div style="font-size:0.75rem; color:#5b21b6; font-weight:700; margin-top:0.4rem; display:flex; align-items:center; gap:0.25rem;">
-              <span>Entrar como Marcos Costa (Diretor)</span> →
-            </div>
-          </div>
-        </button>
-
-      </div>
-
-      <!-- SELETOR DOS 20 ALUNOS COM MATRÍCULA (EXPANDE AO CLICAR EM ALUNO) -->
-      <div id="student-name-picker" style="display:none; margin-top:1.5rem; text-align:left; background:#f0f9ff; padding:1.25rem; border-radius:14px; border:2px solid #bae6fd;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem;">
-          <div>
-            <h4 style="margin:0; font-size:1rem; font-weight:800; color:#0369a1;">🎓 Selecione o seu nome na lista da turma (9º Ano)</h4>
-            <span style="font-size:0.8rem; color:#475569;">Lista oficial dos 20 alunos reais com número de matrícula:</span>
-          </div>
-          <button type="button" onclick="app.hideStudentPicker()" style="background:#e2e8f0; border:none; border-radius:6px; font-size:0.75rem; font-weight:700; padding:0.25rem 0.5rem; cursor:pointer; color:#334155;">✕ Fechar</button>
+      <form onsubmit="event.preventDefault(); app.handleDirectLogin();">
+        <!-- Campo 1: Matrícula ou Usuário -->
+        <div style="margin-bottom:1rem;">
+          <label for="login-username-field" style="display:block; font-size:0.85rem; font-weight:700; color:#1e293b; margin-bottom:0.35rem;">
+            Matrícula ou Usuário:
+          </label>
+          <input type="text" id="login-username-field" class="input" placeholder="Ex: 34897 ou professor" style="width:100%; font-size:1rem; padding:0.65rem 0.85rem; border:2px solid #cbd5e1; border-radius:8px;" required autofocus autocomplete="username">
+          <span style="font-size:0.75rem; color:#64748b; margin-top:0.25rem; display:block;">
+            Aluno: digite sua matrícula (ex: 34897) | Equipe: professor, coordenador ou diretor.
+          </span>
         </div>
 
-        <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
-          <select id="student-select" class="input" style="flex:1; min-width:240px; font-weight:600; padding:0.65rem 0.85rem; background:#ffffff; border-color:#7dd3fc; font-size:0.95rem;">
-            <!-- Populated by JS -->
-          </select>
-          <button class="btn btn-primary" onclick="app.selectStudentForPassword()" style="background:#0284c7; color:#ffffff; font-weight:800; padding:0.65rem 1.4rem; border-radius:8px; border:none; box-shadow:0 2px 6px rgba(2, 132, 199, 0.3);">
-            Avançar para Senha →
+        <!-- Campo 2: Senha com olho -->
+        <div style="margin-bottom:0.75rem;">
+          <label for="login-password-field" style="display:block; font-size:0.85rem; font-weight:700; color:#1e293b; margin-bottom:0.35rem;">
+            Senha de Acesso:
+          </label>
+          <div class="pwd-input-wrap" style="max-width:100%;">
+            <input type="password" id="login-password-field" class="input" placeholder="Digite sua senha..." style="width:100%; font-size:1rem; padding:0.65rem 0.85rem; border:2px solid #cbd5e1; border-radius:8px;" required autocomplete="current-password">
+            <button type="button" class="pwd-toggle-btn" onclick="app.togglePasswordEye('login-password-field', this)" title="Visualizar / Ocultar Senha" aria-label="Visualizar ou ocultar senha">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <!-- Esqueci senha -->
+        <div style="margin-bottom:1.25rem; text-align:right;">
+          <button type="button" onclick="app.openForgotPasswordModalDirect()" style="background:none; border:none; padding:0; color:#0f4c81; font-size:0.85rem; font-weight:700; text-decoration:underline; cursor:pointer;">
+            Esqueci minha senha
           </button>
         </div>
 
-        <!-- Atalhos rápidos em chips para acesso facilitado -->
-        <div style="margin-top:0.85rem; padding-top:0.75rem; border-top:1px dashed #bae6fd;">
-          <div style="font-size:0.75rem; font-weight:700; color:#0369a1; margin-bottom:0.4rem;">Ou clique direto no seu nome para digitar a senha:</div>
-          <div id="quick-student-chips" style="display:flex; flex-wrap:wrap; gap:0.35rem; max-height:130px; overflow-y:auto; padding-right:4px;">
-            <!-- Populated by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- MODAL / PROMPT DE SENHA -->
-      <div id="password-auth-card" style="display:none; margin-top:1.5rem; text-align:left; background:#ffffff; padding:1.5rem; border-radius:14px; border:2px solid #0f4c81; box-shadow:0 8px 24px rgba(15, 76, 129, 0.12);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
-          <div>
-            <span id="pwd-modal-role-badge" class="shell-badge" style="background:#e0f2fe; color:#0369a1; font-weight:800;">Acesso Protegido</span>
-            <h3 id="pwd-modal-title" style="margin:0.35rem 0 0 0; font-size:1.2rem; font-weight:800; color:#0f172a;">Digite sua senha</h3>
-            <p id="pwd-modal-sub" style="margin:0.25rem 0 0 0; font-size:0.85rem; color:#475569;">Informe sua senha de acesso individual para continuar.</p>
-          </div>
-          <button type="button" onclick="app.cancelPasswordPrompt()" style="background:#f1f5f9; border:none; border-radius:6px; font-size:0.85rem; font-weight:700; padding:0.3rem 0.6rem; cursor:pointer; color:#475569;">✕ Fechar</button>
+        <!-- Error Message -->
+        <div id="login-error-msg" style="display:none; padding:0.65rem 0.85rem; background:#fef2f2; border:1px solid #fca5a5; border-radius:8px; color:#b91c1c; font-size:0.88rem; font-weight:600; margin-bottom:1.25rem;">
+          ⚠️ Matrícula/usuário ou senha incorretos. Verifique e tente novamente.
         </div>
 
-        <form onsubmit="event.preventDefault(); app.submitPasswordAuth();">
-          <div style="margin-bottom:0.75rem;">
-            <label for="pwd-input-field" style="display:block; font-size:0.85rem; font-weight:700; color:#1e293b; margin-bottom:0.35rem;">Senha de Acesso:</label>
-            <div class="pwd-input-wrap">
-              <input type="password" id="pwd-input-field" class="input" placeholder="Digite a senha..." style="font-size:1rem; padding:0.65rem 0.85rem; border:2px solid #cbd5e1; border-radius:8px;" required autofocus>
-              <button type="button" class="pwd-toggle-btn" onclick="app.togglePasswordEye('pwd-input-field', this)" title="Visualizar / Ocultar Senha" aria-label="Visualizar ou ocultar senha">
-                👁️
-              </button>
-            </div>
-          </div>
-
-          <!-- Link Esqueci minha senha -->
-          <div style="margin-bottom:1rem;">
-            <button type="button" onclick="app.openForgotPasswordModal()" style="background:none; border:none; padding:0; color:#0f4c81; font-size:0.85rem; font-weight:700; text-decoration:underline; cursor:pointer;">
-              Esqueci minha senha
-            </button>
-          </div>
-
-          <div id="pwd-error-msg" style="display:none; padding:0.65rem 0.85rem; background:#fef2f2; border:1px solid #fca5a5; border-radius:8px; color:#b91c1c; font-size:0.88rem; font-weight:600; margin-bottom:1rem;">
-            ⚠️ Senha incorreta. Fale com seu professor se esqueceu.
-          </div>
-
-          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
-            <button type="submit" class="btn btn-primary" style="background:#0f4c81; color:#fff; font-weight:800; padding:0.65rem 1.5rem; border-radius:8px;">
-              Entrar no Sistema →
-            </button>
-            <button type="button" onclick="app.cancelPasswordPrompt()" class="btn" style="background:#f1f5f9; color:#475569;">
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </div>
-
+        <button type="submit" class="btn btn-primary" style="width:100%; background:#0f4c81; color:#fff; font-weight:800; font-size:1rem; padding:0.75rem; border-radius:8px; border:none; box-shadow:0 4px 12px rgba(15, 76, 129, 0.25);">
+          Entrar no Sistema →
+        </button>
+      </form>
     </div>
 
     <!-- VIEW 1: ALUNO TRILHA -->
@@ -1156,11 +1054,26 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         </div>
       </div>
 
-      <!-- ROTEIRO DE ENSINO (15-20 MIN) & GABARITO COMENTADO -->
-      <div class="warm-card">
-        <h3 style="font-size:1.15rem; font-weight:800; color:#0f4c81; margin:0 0 1rem 0;">
-          Roteiro de Ensino & Gabarito Comentado (Dia 1 e Dia 2)
-        </h3>
+      <!-- RECURSO DÍDACTICO: AULA COMPLETA, DATA SHOW E GERADOR DE ATIVIDADES -->
+      <div class="warm-card" style="border-top:4px solid #0f4c81;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">
+          <div>
+            <h3 style="font-size:1.2rem; font-weight:800; color:#0f4c81; margin:0; display:flex; align-items:center; gap:0.4rem;">
+              📖 Aula Completa, Modo Data Show & Gerador Extra
+            </h3>
+            <p style="margin:0.2rem 0 0 0; font-size:0.85rem; color:#64748b;">
+              Exibição idêntica ao que o aluno vê (cards + 5 questões com opções), projeção em tela cheia e gerador de questões inéditas.
+            </p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="app.openDataShowModal(app.state.activeTeacherTab || 1)" style="background:#0f4c81; color:#fff; font-weight:800; font-size:0.85rem; padding:0.5rem 1rem; border-radius:8px; display:inline-flex; align-items:center; gap:0.4rem;">
+              📺 Modo Data Show (Tela Cheia)
+            </button>
+            <button class="btn" onclick="app.openExtraQuestionGenerator()" style="background:#d97706; color:#fff; font-weight:800; font-size:0.85rem; padding:0.5rem 1rem; border-radius:8px; border:none; display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 2px 6px rgba(217, 119, 6, 0.3);">
+              ⚡ Gerar Atividade Extra
+            </button>
+          </div>
+        </div>
         
         <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
           <button class="btn btn-sm" id="btn-tab-dia1" onclick="app.switchTeacherTab(1)" style="font-weight:700; background:#0f4c81; color:#fff; border-radius:6px;">Dia 1 (D01 A)</button>
@@ -1169,9 +1082,74 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           <button class="btn btn-sm" id="btn-tab-dia4" onclick="app.switchTeacherTab(4)" style="font-weight:700; background:#f1f5f9; color:#475569; border-radius:6px;">Dia 4 (D04 B)</button>
         </div>
 
-        <!-- Conteúdo do Roteiro Dinâmico -->
+        <!-- Conteúdo do Roteiro Dinâmico + Aula Completa -->
         <div id="teacher-lesson-plan" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:1.25rem;">
           <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- SEÇÃO FREQUÊNCIA POR ATIVIDADE -->
+      <div class="warm-card" style="border-top:4px solid #15803d;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.75rem;">
+          <div>
+            <h3 style="margin:0; font-size:1.15rem; font-weight:800; color:#15803d; display:flex; align-items:center; gap:0.4rem;">
+              📋 Frequência por Atividade (Registro Automático & Manual)
+            </h3>
+            <p style="margin:0.2rem 0 0 0; font-size:0.85rem; color:#64748b;">
+              Quem responde no aplicativo fica automaticamente PRESENTE. Marque manualmente 'Presente (Papel)' para quem fez a atividade impressa.
+            </p>
+          </div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <label style="font-size:0.85rem; font-weight:700; color:#1e293b;">Selecione o Dia:</label>
+            <select id="teacher-attendance-day-select" class="input" onchange="app.changeAttendanceDay(this.value)" style="font-weight:700; padding:0.4rem 0.6rem; font-size:0.88rem;">
+              <option value="1">Dia 1 (D01 A)</option>
+              <option value="2">Dia 2 (D01 B)</option>
+              <option value="3">Dia 3 (D04 A)</option>
+              <option value="4">Dia 4 (D04 B)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Grid de resumo de frequência do dia selecionado -->
+        <div class="shell-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); margin-bottom:1rem;">
+          <div class="kpi" style="border-left:4px solid #15803d;">
+            <span class="kpi-label">Total Presentes no Dia</span>
+            <span class="kpi-value" id="att-summary-present-val">0 / 20</span>
+            <span class="kpi-delta up" id="att-summary-present-pct">0% de frequência</span>
+          </div>
+          <div class="kpi" style="border-left:4px solid #0284c7;">
+            <span class="kpi-label">Fizeram pelo App</span>
+            <span class="kpi-value" id="att-summary-app-val">0 alunos</span>
+            <span class="kpi-delta up">Automático</span>
+          </div>
+          <div class="kpi" style="border-left:4px solid #d97706;">
+            <span class="kpi-label">Fizeram no Papel</span>
+            <span class="kpi-value" id="att-summary-paper-val">0 alunos</span>
+            <span class="kpi-delta up">Ajuste docente</span>
+          </div>
+          <div class="kpi" style="border-left:4px solid #dc2626;">
+            <span class="kpi-label">Não Participaram</span>
+            <span class="kpi-value" id="att-summary-absent-val" style="color:#dc2626;">20 alunos</span>
+            <span class="kpi-delta down">Sem registro</span>
+          </div>
+        </div>
+
+        <!-- Tabela dos 20 Alunos para gestão de frequência -->
+        <div style="overflow-x:auto;">
+          <table class="shell-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th style="width:6%;">Nº</th>
+                <th style="width:38%;">Nome do Aluno</th>
+                <th style="width:16%;">Matrícula</th>
+                <th style="width:20%;">Status da Frequência</th>
+                <th style="width:20%; text-align:center;">Ação do Professor</th>
+              </tr>
+            </thead>
+            <tbody id="teacher-attendance-tbody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1747,6 +1725,45 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           <button type="submit" class="btn btn-primary" style="background:#15803d; color:#fff; font-weight:800;">Salvar Nova Senha</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: MODO DATA SHOW (APRESENTAÇÃO EM TELA CHEIA PARA PROJEÇÃO) -->
+  <div id="datashow-modal" style="display:none; position:fixed; inset:0; background:#0f172a; color:#ffffff; z-index:99999; flex-direction:column; padding:1.5rem; overflow-y:auto;">
+    <!-- Top Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #334155; padding-bottom:1rem; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <span class="shell-badge" style="background:#d97706; color:#ffffff; font-weight:800; font-size:0.85rem; padding:0.35rem 0.75rem;">
+          📺 MODO DATA SHOW • PROJEÇÃO EM SALA
+        </span>
+        <h2 id="ds-header-title" style="margin:0.4rem 0 0 0; font-size:1.5rem; font-weight:800; color:#f8fafc;">
+          Dia 1 — Localizar Informações Explícitas
+        </h2>
+      </div>
+      <div style="display:flex; gap:0.75rem; align-items:center;">
+        <button type="button" class="btn" onclick="app.openExtraQuestionGenerator()" style="background:#d97706; color:#ffffff; font-weight:800; font-size:0.9rem; padding:0.5rem 1rem; border:none; border-radius:8px;">
+          ⚡ Gerar outra questão
+        </button>
+        <button type="button" class="btn" onclick="app.closeDataShowModal()" style="background:#334155; color:#ffffff; font-weight:800; font-size:1rem; padding:0.5rem 1rem; border:none; border-radius:8px;">
+          ✕ Sair da Projeção
+        </button>
+      </div>
+    </div>
+
+    <!-- Slide Navigation Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; background:#1e293b; padding:0.75rem 1.25rem; border-radius:12px; border:1px solid #475569; flex-wrap:wrap; gap:0.75rem;">
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;" id="ds-nav-pills">
+        <!-- Generated by JS -->
+      </div>
+      <div style="display:flex; gap:0.5rem;">
+        <button type="button" class="btn" onclick="app.prevDsSlide()" style="background:#334155; color:#fff; font-weight:700;">← Anterior</button>
+        <button type="button" class="btn" onclick="app.nextDsSlide()" style="background:#2563eb; color:#fff; font-weight:800;">Próximo Slide →</button>
+      </div>
+    </div>
+
+    <!-- Main Projection Area with Large Font -->
+    <div id="ds-slide-content-area" style="flex:1; background:#1e293b; border-radius:16px; border:2px solid #334155; padding:2rem; overflow-y:auto; font-size:1.25rem; line-height:1.6;">
+      <!-- Content rendered by JS -->
     </div>
   </div>
 
@@ -2841,38 +2858,96 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       },
 
       // Modal Esqueci Minha Senha
-      openForgotPasswordModal() {
-        const role = this.state.pendingLoginRole;
+      openForgotPasswordModalDirect() {
         const modal = document.getElementById('forgot-password-modal');
         const badge = document.getElementById('forgot-modal-badge');
         const studentFlow = document.getElementById('forgot-student-flow');
         const staffStep1 = document.getElementById('forgot-staff-step1');
         const staffStep2 = document.getElementById('forgot-staff-step2');
-        const nameInput = document.getElementById('forgot-staff-name-input');
         const err1 = document.getElementById('forgot-staff-error1');
         const err2 = document.getElementById('forgot-staff-error2');
 
         if (err1) err1.style.display = 'none';
         if (err2) err2.style.display = 'none';
 
-        if (role === 'aluno') {
-          badge.textContent = 'Aluno(a) • 9º Ano';
-          studentFlow.style.display = 'block';
-          staffStep1.style.display = 'none';
-          staffStep2.style.display = 'none';
-        } else {
-          this.state.forgotStaffRole = role;
-          badge.textContent = `Equipe • ${ROLE_NAMES[role] || 'Gestão'}`;
-          studentFlow.style.display = 'none';
-          staffStep1.style.display = 'block';
-          staffStep2.style.display = 'none';
-          if (nameInput) {
-            nameInput.value = '';
-            setTimeout(() => nameInput.focus(), 100);
+        badge.textContent = 'Recuperação de Acesso';
+        studentFlow.style.display = 'block';
+        staffStep1.style.display = 'none';
+        staffStep2.style.display = 'none';
+
+        modal.style.display = 'flex';
+      },
+
+      openForgotPasswordModal() {
+        this.openForgotPasswordModalDirect();
+      },
+
+      // NOVO LOGIN DIRETO: SEM REVELAR NOMES OU BOTÕES DE PERFIL
+      handleDirectLogin() {
+        const userInput = document.getElementById('login-username-field');
+        const pwdInput = document.getElementById('login-password-field');
+        const errorEl = document.getElementById('login-error-msg');
+
+        const rawUser = (userInput ? userInput.value : '').trim().toLowerCase();
+        const rawPwd = (pwdInput ? pwdInput.value : '').trim();
+
+        if (!rawUser || !rawPwd) {
+          errorEl.textContent = '⚠️ Por favor, preencha a matrícula/usuário e a senha.';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        // Check if student login (matching matricula or student search)
+        const student = this.state.students.find(s => s.mat.toLowerCase() === rawUser || s.name.toLowerCase().includes(rawUser));
+
+        if (student) {
+          if (student.pwd === rawPwd) {
+            errorEl.style.display = 'none';
+            this.state.role = 'aluno';
+            this.state.currentStudentId = student.id;
+            this.saveState();
+            this.renderCurrentView();
+            return;
+          } else {
+            errorEl.textContent = '⚠️ Senha incorreta para o aluno. Fale com seu professor se esqueceu.';
+            errorEl.style.display = 'block';
+            pwdInput.select();
+            return;
           }
         }
 
-        modal.style.display = 'flex';
+        // Check team profiles (professor, coordenador, diretor)
+        if (rawUser === 'professor' || rawUser === 'prof' || rawUser === 'ary') {
+          if (rawPwd === this.state.rolePasswords.professor) {
+            errorEl.style.display = 'none';
+            this.state.role = 'professor';
+            this.saveState();
+            this.renderCurrentView();
+            this.checkStaffSecuritySetup('professor');
+            return;
+          }
+        } else if (rawUser === 'coordenador' || rawUser === 'coord' || rawUser === 'iran') {
+          if (rawPwd === this.state.rolePasswords.coordenador) {
+            errorEl.style.display = 'none';
+            this.state.role = 'coordenador';
+            this.saveState();
+            this.renderCurrentView();
+            this.checkStaffSecuritySetup('coordenador');
+            return;
+          }
+        } else if (rawUser === 'diretor' || rawUser === 'direcao' || rawUser === 'marcos') {
+          if (rawPwd === this.state.rolePasswords.diretor) {
+            errorEl.style.display = 'none';
+            this.state.role = 'diretor';
+            this.saveState();
+            this.renderCurrentView();
+            this.checkStaffSecuritySetup('diretor');
+            return;
+          }
+        }
+
+        errorEl.textContent = '⚠️ Matrícula/usuário ou senha incorretos.';
+        errorEl.style.display = 'block';
       },
 
       closeForgotPasswordModal() {
@@ -3111,7 +3186,8 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       // --- ALUNO TRAIL & QUALIFICAÇÃO RENDERING ---
       renderStudentTrail() {
         const student = this.getCurrentStudent();
-        document.getElementById('student-greeting').textContent = `Olá, ${student.name.split(' ')[0]}!`;
+        const firstName = student ? student.name.split(' ')[0] : 'Aluno';
+        document.getElementById('student-greeting').textContent = `Bem-vindo(a), ${firstName}!`;
         
         // Render badges (todos bloqueados até realizar atividades de verdade)
         const badgesContainer = document.getElementById('student-badges-container');
@@ -4226,7 +4302,46 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
             </div>
 
             <h4 style="margin:1rem 0 0.4rem 0; font-size:0.95rem; font-weight:800; text-transform:uppercase; border-bottom:1px solid #000; padding-bottom:0.25rem;">
-              2. Plano de Ação Pedagógica & Aderência ao Cronograma
+              2. Frequência por Atividade (Acompanhamento Nominal)
+            </h4>
+            <table class="print-table">
+              <thead>
+                <tr>
+                  <th style="width:15%;">Dia Liberado</th>
+                  <th style="width:25%;">Participantes (App + Papel)</th>
+                  <th style="width:20%; text-align:right;">% Participação</th>
+                  <th style="width:40%;">Lista Nominal de Quem NÃO Participou</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(this.state.unlockedDays.length === 0 ? `
+                  <tr><td colspan="4" style="text-align:center; color:#64748b; font-style:italic; padding:0.6rem;">Nenhum dia liberado até o momento.</td></tr>
+                ` : this.state.unlockedDays.map(dNum => {
+                  let presentCount = 0;
+                  const absents = [];
+                  this.state.students.forEach(st => {
+                    const status = this.getAttendanceStatus(dNum, st.id);
+                    if (status === 'participou' || status === 'papel') {
+                      presentCount++;
+                    } else {
+                      absents.push(st.name.split(' ')[0] + ' ' + (st.name.split(' ')[1] || ''));
+                    }
+                  });
+                  const pct = Math.round((presentCount / 20) * 100);
+                  return `
+                    <tr>
+                      <td><strong>Dia ${dNum}</strong></td>
+                      <td>${presentCount} de 20 alunos</td>
+                      <td style="text-align:right;"><strong>${pct}%</strong></td>
+                      <td style="font-size:0.78rem;">${absents.length > 0 ? absents.join(', ') : '<em>100% de participação (Nenhum ausente)</em>'}</td>
+                    </tr>
+                  `;
+                }).join(''))}
+              </tbody>
+            </table>
+
+            <h4 style="margin:1rem 0 0.4rem 0; font-size:0.95rem; font-weight:800; text-transform:uppercase; border-bottom:1px solid #000; padding-bottom:0.25rem;">
+              3. Plano de Ação Pedagógica & Aderência ao Cronograma
             </h4>
             <div style="font-size:0.85rem; line-height:1.5; margin-bottom:2rem;">
               <p>• <strong>Execução Cronológica:</strong> Fase 1 com os descritores fundamentais D01 e D04 estruturados na plataforma. A liberação ocorre síncrona com as aulas expositivas do Prof. Ary Gomes.</p>
@@ -4518,10 +4633,375 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       },
 
       // --- TEACHER PANEL ---
+      // --- FREQUÊNCIA POR ATIVIDADE ---
+      getAttendanceStatus(day, studentId) {
+        if (!this.state.attendance) this.state.attendance = {};
+        const key = `dia_${day}_aluno_${studentId}`;
+        if (this.state.attendance[key]) {
+          return this.state.attendance[key];
+        }
+        // Registra automaticamente: quem respondeu fica 'participou'
+        const hasScores = this.state.quizScores && (
+          this.state.quizScores[`aluno_${studentId}_dia_${day}`] !== undefined ||
+          (day === 1 && this.state.students.find(s => s.id === studentId)?.scoreD1 !== null)
+        );
+        return hasScores ? 'participou' : 'nao_participou';
+      },
+
+      async setAttendanceStatus(day, studentId, status) {
+        if (!this.state.attendance) this.state.attendance = {};
+        const key = `dia_${day}_aluno_${studentId}`;
+        this.state.attendance[key] = status;
+        await this.saveDomainToSupabase('frequencia', this.state.attendance);
+        this.renderTeacherAttendanceTable(day);
+      },
+
+      changeAttendanceDay(dayVal) {
+        const day = parseInt(dayVal, 10);
+        this.renderTeacherAttendanceTable(day);
+      },
+
+      renderTeacherAttendanceTable(day) {
+        const tbody = document.getElementById('teacher-attendance-tbody');
+        if (!tbody) return;
+
+        let presentCount = 0;
+        let appCount = 0;
+        let paperCount = 0;
+        let absentCount = 0;
+
+        tbody.innerHTML = this.state.students.map((st, idx) => {
+          const status = this.getAttendanceStatus(day, st.id);
+          if (status === 'participou') {
+            presentCount++;
+            appCount++;
+          } else if (status === 'papel') {
+            presentCount++;
+            paperCount++;
+          } else {
+            absentCount++;
+          }
+
+          let badge = `<span class="shell-badge" style="background:#fee2e2; color:#991b1b; font-weight:700;">Não participou</span>`;
+          if (status === 'participou') {
+            badge = `<span class="shell-badge" style="background:#dcfce7; color:#15803d; font-weight:800;">🟢 Participou (App)</span>`;
+          } else if (status === 'papel') {
+            badge = `<span class="shell-badge" style="background:#fef3c7; color:#92400e; font-weight:800;">📝 Presente (Papel)</span>`;
+          }
+
+          return `
+            <tr>
+              <td style="color:#64748b; font-size:0.85rem;">${idx + 1}</td>
+              <td style="font-weight:700; color:#0f172a;">${st.name}</td>
+              <td style="font-size:0.85rem; color:#64748b;">${st.mat}</td>
+              <td>${badge}</td>
+              <td style="text-align:center;">
+                <select class="input" onchange="app.setAttendanceStatus(${day}, ${st.id}, this.value)" style="font-size:0.8rem; font-weight:700; padding:0.25rem 0.5rem; border-radius:6px;">
+                  <option value="participou" ${status === 'participou' ? 'selected' : ''}>Participou (App)</option>
+                  <option value="papel" ${status === 'papel' ? 'selected' : ''}>Presente (Papel)</option>
+                  <option value="nao_participou" ${status === 'nao_participou' ? 'selected' : ''}>Não participou</option>
+                </select>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        // Update KPIs
+        const presVal = document.getElementById('att-summary-present-val');
+        if (presVal) presVal.textContent = `${presentCount} / 20`;
+        const presPct = document.getElementById('att-summary-present-pct');
+        if (presPct) presPct.textContent = `${Math.round((presentCount / 20) * 100)}% de frequência`;
+        const appVal = document.getElementById('att-summary-app-val');
+        if (appVal) appVal.textContent = `${appCount} alunos`;
+        const paperVal = document.getElementById('att-summary-paper-val');
+        if (paperVal) paperVal.textContent = `${paperCount} alunos`;
+        const absentVal = document.getElementById('att-summary-absent-val');
+        if (absentVal) absentVal.textContent = `${absentCount} alunos`;
+      },
+
+      // --- MODO DATA SHOW & GERADOR DE QUESTÕES EXTRAS ---
+      stateDs: {
+        currentDay: 1,
+        slideIdx: 0,
+        revealed: false,
+        extraQuestion: null
+      },
+
+      openDataShowModal(dayNum = 1) {
+        this.stateDs.currentDay = dayNum;
+        this.stateDs.slideIdx = 0;
+        this.stateDs.revealed = false;
+        this.stateDs.extraQuestion = null;
+
+        const modal = document.getElementById('datashow-modal');
+        if (modal) modal.style.display = 'flex';
+        this.renderDsSlide();
+      },
+
+      closeDataShowModal() {
+        const modal = document.getElementById('datashow-modal');
+        if (modal) modal.style.display = 'none';
+      },
+
+      setDsSlide(idx) {
+        this.stateDs.slideIdx = idx;
+        this.stateDs.revealed = false;
+        this.renderDsSlide();
+      },
+
+      prevDsSlide() {
+        if (this.stateDs.slideIdx > 0) {
+          this.stateDs.slideIdx--;
+          this.stateDs.revealed = false;
+          this.renderDsSlide();
+        }
+      },
+
+      nextDsSlide() {
+        const dayItem = DAYS_DATA.find(d => d.day === this.stateDs.currentDay) || DAYS_DATA[0];
+        const totalSlides = (dayItem.questions ? dayItem.questions.length : 0) + 1;
+        if (this.stateDs.slideIdx < totalSlides - 1) {
+          this.stateDs.slideIdx++;
+          this.stateDs.revealed = false;
+          this.renderDsSlide();
+        }
+      },
+
+      toggleDsReveal() {
+        this.stateDs.revealed = !this.stateDs.revealed;
+        this.renderDsSlide();
+      },
+
+      renderDsSlide() {
+        const dayNum = this.stateDs.currentDay;
+        const dayItem = DAYS_DATA.find(d => d.day === dayNum) || DAYS_DATA[0];
+        const isExtra = !!this.stateDs.extraQuestion;
+
+        const titleEl = document.getElementById('ds-header-title');
+        if (titleEl) {
+          titleEl.textContent = isExtra 
+            ? `Atividade Extra Gerada na Hora • ${this.stateDs.extraQuestion.descritor}` 
+            : `Dia ${dayItem.day} — ${dayItem.title}`;
+        }
+
+        // Render Nav Pills
+        const navPills = document.getElementById('ds-nav-pills');
+        if (navPills) {
+          if (isExtra) {
+            navPills.innerHTML = `<span class="shell-badge" style="background:#f59e0b; color:#fff; font-size:0.9rem;">⚡ Questão Inédita Projetada</span>`;
+          } else {
+            const questions = dayItem.questions || [];
+            let html = `
+              <button type="button" class="btn btn-sm" onclick="app.setDsSlide(0)" style="background:${this.stateDs.slideIdx === 0 ? '#0f4c81' : '#334155'}; color:#fff; font-weight:800;">
+                🎴 Card do Dia
+              </button>
+            `;
+            questions.forEach((q, i) => {
+              const slideNum = i + 1;
+              html += `
+                <button type="button" class="btn btn-sm" onclick="app.setDsSlide(${slideNum})" style="background:${this.stateDs.slideIdx === slideNum ? '#0f4c81' : '#334155'}; color:#fff; font-weight:800;">
+                  Q${slideNum}
+                </button>
+              `;
+            });
+            navPills.innerHTML = html;
+          }
+        }
+
+        // Render Slide Area
+        const area = document.getElementById('ds-slide-content-area');
+        if (!area) return;
+
+        if (isExtra) {
+          const q = this.stateDs.extraQuestion;
+          area.innerHTML = this.renderDsQuestionHtml(q, "Questão Inédita Gerada para a Aula");
+          return;
+        }
+
+        if (this.stateDs.slideIdx === 0) {
+          // Slide 0: Card do Dia
+          area.innerHTML = `
+            <div style="max-width:900px; margin:0 auto; background:#0f172a; padding:1.5rem; border-radius:14px; border:2px solid #0f4c81;">
+              <span class="shell-badge" style="background:#fef3c7; color:#92400e; font-weight:800; font-size:0.9rem;">${dayItem.descritor}</span>
+              <h2 style="font-size:1.8rem; font-weight:800; color:#ffffff; margin:0.5rem 0 1rem 0;">${dayItem.title}</h2>
+
+              <div style="background:#1e293b; padding:1.25rem; border-radius:10px; border-left:6px solid #38bdf8; margin-bottom:1rem; color:#e2e8f0;">
+                <div style="font-size:1rem; font-weight:800; color:#38bdf8; text-transform:uppercase; margin-bottom:0.4rem;">1. Como Reconhecer na Prova</div>
+                ${dayItem.reconhecer || ''}
+              </div>
+
+              <div style="background:#1e293b; padding:1.25rem; border-radius:10px; border-left:6px solid #f59e0b; margin-bottom:1rem; color:#e2e8f0;">
+                <div style="font-size:1rem; font-weight:800; color:#f59e0b; text-transform:uppercase; margin-bottom:0.4rem;">2. O Macete Passo a Passo</div>
+                ${dayItem.macete || ''}
+              </div>
+
+              <div style="background:#1e293b; padding:1.25rem; border-radius:10px; border-left:6px solid #4ade80; margin-bottom:1rem; color:#e2e8f0;">
+                <div style="font-size:1rem; font-weight:800; color:#4ade80; text-transform:uppercase; margin-bottom:0.4rem;">3. Frase para Levar na Prova</div>
+                <div style="font-weight:800; font-style:italic; color:#86efac;">${dayItem.fraseLevar || ''}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Slide 1..5: Question
+          const qIdx = this.stateDs.slideIdx - 1;
+          const q = (dayItem.questions && dayItem.questions[qIdx]) ? dayItem.questions[qIdx] : null;
+          if (!q) {
+            area.innerHTML = `<div style="text-align:center; padding:2rem; color:#cbd5e1;">Questão não disponível para este dia.</div>`;
+            return;
+          }
+          area.innerHTML = this.renderDsQuestionHtml(q, `Questão ${qIdx + 1} de 5`);
+        }
+      },
+
+      renderDsQuestionHtml(q, labelTag) {
+        const isRevealed = this.stateDs.revealed;
+
+        return `
+          <div style="max-width:960px; margin:0 auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <span class="shell-badge" style="background:#38bdf8; color:#0f172a; font-weight:800; font-size:0.9rem;">${labelTag}</span>
+              <button type="button" class="btn" onclick="app.toggleDsReveal()" style="background:${isRevealed ? '#15803d' : '#d97706'}; color:#fff; font-weight:800; font-size:1rem; padding:0.6rem 1.25rem; border-radius:10px; border:none; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+                ${isRevealed ? '🙈 Ocultar Resposta' : '💡 Revelar Resposta e Pegadinhas'}
+              </button>
+            </div>
+
+            <!-- Texto Base -->
+            <div style="background:#0f172a; border-left:6px solid #38bdf8; padding:1.25rem; border-radius:10px; color:#f8fafc; font-size:1.2rem; line-height:1.6; margin-bottom:1.25rem; font-style:italic;">
+              "${q.text}"
+            </div>
+
+            <!-- Enunciado -->
+            <div style="font-weight:800; font-size:1.35rem; color:#fde047; margin-bottom:1.25rem; line-height:1.4;">
+              ${q.prompt}
+            </div>
+
+            <!-- Alternativas A-D -->
+            <div style="display:flex; flex-direction:column; gap:0.85rem; margin-bottom:1.5rem;">
+              ${q.options.map(opt => {
+                let optBg = "#1e293b";
+                let optBorder = "#334155";
+                let optColor = "#f8fafc";
+                let badgeTag = "";
+
+                if (isRevealed) {
+                  if (opt.correct) {
+                    optBg = "#14532d";
+                    optBorder = "#22c55e";
+                    optColor = "#ffffff";
+                    badgeTag = `<span class="shell-badge" style="background:#22c55e; color:#000; font-weight:900; font-size:0.85rem; margin-left:auto;">✓ RESPOSTA CORRETA</span>`;
+                  } else {
+                    optBg = "#450a0a";
+                    optBorder = "#ef4444";
+                    optColor = "#fca5a5";
+                    badgeTag = `<span class="shell-badge" style="background:#ef4444; color:#fff; font-weight:800; font-size:0.75rem; margin-left:auto;">PEGADINHA</span>`;
+                  }
+                }
+
+                return `
+                  <div style="background:${optBg}; border:2px solid ${optBorder}; color:${optColor}; border-radius:12px; padding:1rem 1.25rem; display:flex; align-items:flex-start; gap:0.85rem; font-size:1.15rem; line-height:1.4; transition:all 0.2s ease;">
+                    <span style="font-weight:900; min-width:28px;">${opt.letter})</span>
+                    <div style="flex:1;">
+                      <div>${opt.text}</div>
+                      ${isRevealed && opt.trap ? `<div style="font-size:0.9rem; margin-top:0.35rem; color:#fde047; font-weight:600;">⚠️ Pegadinha: ${opt.trap}</div>` : ''}
+                    </div>
+                    ${badgeTag}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            ${isRevealed ? `
+              <div style="background:#14532d; border:2px solid #22c55e; padding:1.25rem; border-radius:12px; color:#ffffff; font-size:1.1rem; line-height:1.5;">
+                <div style="font-weight:900; font-size:1.2rem; color:#fde047; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+                  ✅ Gabarito Defensável e Desmonte das Pegadinhas
+                </div>
+                <p style="margin:0;">A alternativa correta é rigorosamente sustentada pelo texto. As demais alternativas foram elaboradas com as 4 pegadinhas clássicas do SPAECE para treinar a atenção plena dos alunos.</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      },
+
+      // --- GERADOR DE ATIVIDADES EXTRAS DE LÍNGUA PORTUGUESA ---
+      openExtraQuestionGenerator() {
+        const generated = this.generateRandomSpaeceQuestion();
+        this.stateDs.extraQuestion = generated;
+        this.stateDs.revealed = false;
+
+        const modal = document.getElementById('datashow-modal');
+        if (modal) modal.style.display = 'flex';
+        this.renderDsSlide();
+      },
+
+      generateRandomSpaeceQuestion() {
+        const descriptorType = Math.random() > 0.5 ? 'D01' : 'D04';
+
+        const textsD01 = [
+          {
+            text: "Na Horta Comunitária do Assentamento São José, os alunos do 9º ano colheram 40 quilos de feijão de corda na manhã de quinta-feira. Toda a colheita foi destinada para enriquecer a merenda da escola Francisco Carlos de Pinho.",
+            prompt: "De acordo com o texto, a colheita da horta comunitária foi destinada para...",
+            correctText: "enriquecer a merenda da escola Francisco Carlos de Pinho.",
+            invertido: "ser vendida na feira livre de Crateús.",
+            camaleao: "comprar sementes para a manhã de quinta-feira.",
+            inventor: "exportar para outros assentamentos do Ceará.",
+            descritor: "D01 — Localizar informação explícita"
+          },
+          {
+            text: "O projeto de leitura sobre rodas visita o assentamento na segunda segunda-feira de cada mês, levando mais de 300 livros de literatura para as crianças e jovens da zona rural de Crateús.",
+            prompt: "Segundo o texto, o projeto de leitura visita o assentamento na...",
+            correctText: "segunda segunda-feira de cada mês.",
+            invertido: "última sexta-feira de todo ano.",
+            camaleao: "zona rural de Crateús todos os dias.",
+            inventor: "primeira semana das férias escolares.",
+            descritor: "D01 — Localizar informação explícita"
+          }
+        ];
+
+        const textsD04 = [
+          {
+            text: "Dona Antônia olhou para o terreiro seco, abriu o rádio de pilha e ouviu o locutor anunciar a previsão de chuva para Crateús. Sorriu em silêncio e começou a separar as enxadas no alpendre.",
+            prompt: "Pode-se inferir do texto que dona Antônia...",
+            correctText: "preparava-se com esperança para iniciar o plantio com a chegada da chuva.",
+            invertido: "pretendia vender o rádio de pilha para comprar sementes.",
+            camaleao: "ficou irritada ao ouvir o locutor do rádio anunciando a chuva.",
+            inventor: "decidiu abandonar a roça e se mudar para a cidade.",
+            descritor: "D04 — Inferir informação implícita"
+          },
+          {
+            text: "Quando o ônibus do transporte escolar desponta na curva da estrada de terra, os alunos do assentamento já estão com as mochilas nas costas e os cadernos organizados.",
+            prompt: "O texto deixa subentendido que os alunos do assentamento...",
+            correctText: "demonstram compromisso e pontualidade com a rotina escolar.",
+            invertido: "estavam atrasados e perderam a aula na escola.",
+            camaleao: "recusavam-se a entrar no ônibus do transporte.",
+            inventor: "preferiam ir a pé para a cidade de Crateús.",
+            descritor: "D04 — Inferir informação implícita"
+          }
+        ];
+
+        const pool = descriptorType === 'D01' ? textsD01 : textsD04;
+        const item = pool[Math.floor(Math.random() * pool.length)];
+
+        return {
+          descritor: item.descritor,
+          text: item.text,
+          prompt: item.prompt,
+          options: [
+            { letter: "A", text: item.correctText, correct: true },
+            { letter: "B", text: item.invertido, trap: "O INVERTIDO (inverte a lógica ou os fatos trazidos no texto)." },
+            { letter: "C", text: item.camaleao, trap: "O CAMALEÃO (mistura palavras soltas do texto numa ideia falsa)." },
+            { letter: "D", text: item.inventor, trap: "O INVENTOR (inventa fatos que não estão em momento algum no texto)." }
+          ].sort(() => Math.random() - 0.5).map((opt, idx) => ({
+            ...opt,
+            letter: String.fromCharCode(65 + idx)
+          }))
+        };
+      },
+
       renderTeacherPanel() {
         this.renderSharedManagementBlock('shared-management-summary-professor', 'professor');
         this.renderTeacherLockControls();
         this.switchTeacherTab(this.state.activeTeacherTab || 1);
+        this.renderTeacherAttendanceTable(1);
         this.updateTeacherSummaryKPIs();
         this.renderTeacherTable();
         this.renderAccessSheet();
@@ -4621,6 +5101,63 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         });
 
         const planEl = document.getElementById('teacher-lesson-plan');
+        const dayItem = DAYS_DATA.find(d => d.day === dayNum) || DAYS_DATA[0];
+
+        const fullLessonHtml = `
+          <div style="margin-top:1.5rem; padding-top:1.25rem; border-top:2px solid #cbd5e1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <span class="shell-badge" style="background:#0f4c81; color:#ffffff; font-weight:800; font-size:0.85rem;">
+                📖 AULA COMPLETA • EXIBIÇÃO IDÊNTICA AO ALUNO
+              </span>
+              <button class="btn btn-sm" onclick="app.openDataShowModal(${dayNum})" style="background:#d97706; color:#ffffff; font-weight:800; font-size:0.8rem;">
+                📺 Projetar esta aula no Data Show
+              </button>
+            </div>
+
+            <!-- Card 4 camadas -->
+            <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem;">
+              <h4 style="margin:0 0 0.5rem 0; color:#0f172a; font-size:1.1rem; font-weight:800;">O Card do Conhecimento (4 Camadas)</h4>
+              <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.88rem; color:#334155;">
+                <div style="background:#f8fafc; padding:0.75rem; border-left:4px solid #0f4c81; border-radius:6px;">
+                  <strong>1. Como Reconhecer na Prova:</strong> ${dayItem.reconhecer || ''}
+                </div>
+                <div style="background:#fffbeb; padding:0.75rem; border-left:4px solid #d97706; border-radius:6px;">
+                  <strong>2. O Macete Passo a Passo:</strong> ${dayItem.macete || ''}
+                </div>
+                <div style="background:#eff6ff; padding:0.75rem; border-left:4px solid #2563eb; border-radius:6px;">
+                  <strong>3. Aplicação Guiada:</strong> ${dayItem.aplicacao || ''}
+                </div>
+                <div style="background:#f0fdf4; padding:0.75rem; border-left:4px solid #15803d; border-radius:6px; font-weight:700; color:#166534;">
+                  <strong>4. Frase para Levar:</strong> ${dayItem.fraseLevar || ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- 5 Questões Completas com Texto Base, Enunciado e Alternativas A-D -->
+            <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1.25rem;">
+              <h4 style="margin:0 0 1rem 0; color:#0f172a; font-size:1.1rem; font-weight:800;">As 5 Questões Completas da Atividade</h4>
+              ${(dayItem.questions || []).map((q, idx) => `
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:1rem; margin-bottom:1.25rem;">
+                  <div style="font-weight:800; font-size:0.85rem; color:#0f4c81; margin-bottom:0.4rem;">Questão ${idx + 1} de 5</div>
+                  <div style="background:#ffffff; padding:0.75rem; border-left:3px solid #3b82f6; border-radius:6px; font-size:0.9rem; color:#334155; margin-bottom:0.65rem;">
+                    <em>"${q.text}"</em>
+                  </div>
+                  <div style="font-weight:700; font-size:0.92rem; color:#0f172a; margin-bottom:0.65rem;">
+                    ${q.prompt}
+                  </div>
+                  <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                    ${q.options.map(opt => `
+                      <div style="padding:0.5rem 0.75rem; border-radius:6px; font-size:0.88rem; background:${opt.correct ? '#f0fdf4' : '#ffffff'}; border:1px solid ${opt.correct ? '#86efac' : '#cbd5e1'}; color:${opt.correct ? '#14532d' : '#1e293b'}; font-weight:${opt.correct ? '700' : 'normal'};">
+                        <strong>${opt.letter})</strong> ${opt.text} ${opt.correct ? ' <span style="color:#15803d; font-weight:800; font-size:0.75rem;">(GABARITO CORRETO)</span>' : ''}
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
         if (dayNum === 1) {
           planEl.innerHTML = `
             <div style="border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem; margin-bottom:0.75rem;">
@@ -4642,6 +5179,65 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
                 <strong>Q5: C</strong> (A, B e D = O INVERTIDO).
               </div>
             </div>
+            ${fullLessonHtml}
+          `;
+        } else if (dayNum === 2) {
+          planEl.innerHTML = `
+            <div style="border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem; margin-bottom:0.75rem;">
+              <span class="shell-badge" style="background:#fef3c7; color:#92400e; font-weight:700;">Roteiro de Ensino (15 a 20 min) • Dia 2: D01 (B)</span>
+              <h4 style="margin:0.35rem 0 0 0; color:#0f172a; font-size:1.1rem; font-weight:800;">Desarmando as 4 Grandes Pegadinhas do SPAECE</h4>
+            </div>
+            <div style="font-size:0.9rem; color:#334155; line-height:1.5; display:flex; flex-direction:column; gap:0.5rem;">
+              <p><strong>Minuto 0 a 6 — As 4 Faces do Erro:</strong> Apresente os 4 nomes amigáveis que os alunos nunca mais vão esquecer: <em>1. O Invertido</em>, <em>2. O Camaleão</em>, <em>3. O Inventor</em> e <em>4. O Exato Demais</em>.</p>
+              <p><strong>Minuto 6 a 14 — Desmonte Guiado:</strong> Use o exemplo da van escolar do assentamento. Peça para um aluno voluntário ler a alternativa A e identificar porque ela é "O Invertido" (trocou sede por escola).</p>
+              <p><strong>Minuto 14 a 20 — Ativação da Trava:</strong> Clique em "Liberar Dia 2" aqui no painel. Os 20 alunos recarregam e fazem o teste com olhar clínico de detetive!</p>
+            </div>
+            <div style="margin-top:1rem; padding:0.75rem; background:#ffffff; border-radius:8px; border:1px solid #cbd5e1;">
+              <strong style="color:#0f4c81;">Gabarito Oficial Comentado do Dia 2:</strong>
+              <div style="margin-top:0.35rem; font-size:0.85rem; color:#334155;">
+                <strong>Q1: B</strong> (A e C = O INVERTIDO, D = O INVENTOR) | 
+                <strong>Q2: B</strong> (A = O CAMALEÃO, C e D = O INVENTOR / INVERTIDO) | 
+                <strong>Q3: B</strong> (A e C = O INVENTOR, D = O INVERTIDO) | 
+                <strong>Q4: B</strong> (A = O INVERTIDO, C = O EXATO DEMAIS, D = O INVENTOR) | 
+                <strong>Q5: C</strong> (A, B e D = O INVERTIDO).
+              </div>
+            </div>
+            ${fullLessonHtml}
+          `;
+        } else if (dayNum === 3) {
+          planEl.innerHTML = `
+            <div style="border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem; margin-bottom:0.75rem;">
+              <span class="shell-badge" style="background:#e0f2fe; color:#0369a1; font-weight:700;">Roteiro de Ensino (15 a 20 min) • Dia 3: D04 (A)</span>
+              <h4 style="margin:0.35rem 0 0 0; color:#0f172a; font-size:1.1rem; font-weight:800;">D04 — Inferir informação implícita: O Detetive do Texto</h4>
+            </div>
+            <div style="font-size:0.9rem; color:#334155; line-height:1.5; display:flex; flex-direction:column; gap:0.5rem;">
+              <p><strong>Minuto 0 a 5 — Card do Detetive:</strong> Apresente a regra do D04: "Se a resposta NÃO está escrita com todas as letras no texto, é inferência!" Ensine os 4 passos do detetive.</p>
+              <p><strong>Minuto 5 a 15 — Prática Individual:</strong> Libere o Dia 3 no aplicativo.</p>
+            </div>
+            <div style="margin-top:1rem; padding:0.75rem; background:#ffffff; border-radius:8px; border:1px solid #cbd5e1;">
+              <strong style="color:#0f4c81;">Gabarito Oficial Comentado do Dia 3:</strong>
+              <div style="margin-top:0.35rem; font-size:0.85rem; color:#334155;">
+                <strong>Q1: B</strong> | <strong>Q2: C</strong> | <strong>Q3: D</strong> | <strong>Q4: B</strong> | <strong>Q5: A</strong>.
+              </div>
+            </div>
+            ${fullLessonHtml}
+          `;
+        } else if (dayNum === 4) {
+          planEl.innerHTML = `
+            <div style="border-bottom:1px solid #e2e8f0; padding-bottom:0.75rem; margin-bottom:0.75rem;">
+              <span class="shell-badge" style="background:#fef3c7; color:#92400e; font-weight:700;">Roteiro de Ensino (15 a 20 min) • Dia 4: D04 (B)</span>
+              <h4 style="margin:0.35rem 0 0 0; color:#0f172a; font-size:1.1rem; font-weight:800;">D04 — Dia B: O Detetive nas tiras e crônicas</h4>
+            </div>
+            <div style="font-size:0.9rem; color:#334155; line-height:1.5; display:flex; flex-direction:column; gap:0.5rem;">
+              <p><strong>Minuto 0 a 5 — Leitura de Tiras e Crônicas:</strong> Explique que nas tirinhas a mensagem mora no que NÃO é dito verbalmente.</p>
+            </div>
+            <div style="margin-top:1rem; padding:0.75rem; background:#ffffff; border-radius:8px; border:1px solid #cbd5e1;">
+              <strong style="color:#0f4c81;">Gabarito Oficial Comentado do Dia 4:</strong>
+              <div style="margin-top:0.35rem; font-size:0.85rem; color:#334155;">
+                <strong>Q1: C</strong> | <strong>Q2: A</strong> | <strong>Q3: D</strong> | <strong>Q4: B</strong> | <strong>Q5: C</strong>.
+              </div>
+            </div>
+            ${fullLessonHtml}
           `;
         } else if (dayNum === 2) {
           planEl.innerHTML = `
