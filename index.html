@@ -134,7 +134,493 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       margin: 0;
       padding-bottom: 2rem;
     }
-    /* Brand Header */
+       1. CONSTANTES PEDAGÓGICAS E LISTA DE ALUNOS
+       ===================================================================== */
+    const STUDENTS = [
+      { id: "1001", name: "Alice Rodrigues Amancio" },
+      { id: "1002", name: "Ana Júlia Vieira Gomes" },
+      { id: "1003", name: "Antonio Francisco Vieira de Lima" },
+      { id: "1004", name: "Francisca Carolina Venâncio do Nascimento" },
+      { id: "1005", name: "Francisca Myllena Soares Chaves" },
+      { id: "1006", name: "Francisco Erick Vieira Soares" },
+      { id: "1007", name: "Francisco Luan da Silva Andrade" },
+      { id: "1008", name: "Gustavo Henrique de Sousa Barbosa" },
+      { id: "1009", name: "Jamili da Silva Bezerra" },
+      { id: "1010", name: "João Victor Gonçalves da Silva" },
+      { id: "1011", name: "João Vitor de Sousa Alves" },
+      { id: "1012", name: "José Maikon Ferreira Muniz" },
+      { id: "1013", name: "José Wedson Gonçalves Laurentino da Silva" },
+      { id: "1014", name: "Luis Henrique Ximenes Torres" },
+      { id: "1015", name: "Maria Cecília Oliveira Sousa" },
+      { id: "1016", name: "Maria Lauanda Alves Costa" },
+      { id: "1017", name: "Maria Milena de Sousa Machado" },
+      { id: "1018", name: "Maria Rita Coelho da Silva" },
+      { id: "1019", name: "Pedro Carlos Lopes da Silva" },
+      { id: "1020", name: "Rosiane Ximenes de Sousa" },
+      { id: "1021", name: "Vitor Maciel Ribeiro Barbosa" }
+    ];
+
+    // Níveis por % de acerto acumulado
+    const CUTOFF_AVANCADO = 80;
+    const CUTOFF_ADEQUADO = 60;
+
+    // Metas de distribuição calculadas proporcionalmente (70% Avançado, 20% Adequado, 10% Básico)
+    const TARGET_AVANCADO_COUNT = Math.round(STUDENTS.length * 0.70); // 15 para 21
+    const TARGET_ADEQUADO_COUNT = Math.round(STUDENTS.length * 0.20); // 4 para 21
+    const TARGET_BASICO_COUNT = STUDENTS.length - TARGET_AVANCADO_COUNT - TARGET_ADEQUADO_COUNT; // 2 para 21
+=======
+       8. MODO DATA SHOW (PROJETOR - TIPOGRAFIA GRANDE E REVELAÇÃO)
+       ===================================================================== */
+    let dsState = {
+      day: 1,
+      qIndex: 0,
+      revealed: false
+    };
+
+    function openDataShowDay(dayNum) {
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) sel.value = String(dayNum);
+      dsState.day = parseInt(dayNum, 10) || 1;
+      dsState.qIndex = 0;
+      dsState.revealed = false;
+      switchTab("datashow");
+      renderDataShowQuestion();
+    }
+
+    function initDataShow() {
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) {
+        dsState.day = parseInt(sel.value, 10) || 1;
+      }
+      if (dsState.qIndex === undefined) dsState.qIndex = 0;
+      renderDataShowQuestion();
+    }
+
+    function dsChangeDay() {
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) {
+        dsState.day = parseInt(sel.value, 10) || 1;
+      }
+      dsState.qIndex = 0;
+      dsState.revealed = false;
+      renderDataShowQuestion();
+    }
+
+    function renderDataShowQuestion() {
+      const dayData = DAYS_DATA.find(d => d.day === dsState.day);
+      if (!dayData) return;
+      const q = dayData.questions[dsState.qIndex];
+
+      document.getElementById("dsQIndex").textContent = `Dia ${dayData.day} • Questão ${dsState.qIndex + 1} de 5 (${q.tag})`;
+      const difEl = document.getElementById("dsQDificuldade");
+      difEl.textContent = q.difficulty;
+      difEl.style.background = q.difficulty === "Difícil" ? "#fee2e2" : "#fef3c7";
+      difEl.style.color = q.difficulty === "Difícil" ? "#991b1b" : "#92400e";
+
+      document.getElementById("dsStemText").innerHTML = `
+        ${q.stem}
+        <div style="font-size:0.9rem; color:#64748b; font-style:italic; margin-top:0.8rem; text-align:right;">${q.source}</div>
+      `;
+      document.getElementById("dsEnunciadoText").textContent = q.question;
+
+      const optsCont = document.getElementById("dsOptionsContainer");
+      optsCont.innerHTML = "";
+      q.options.forEach(opt => {
+        const div = document.createElement("div");
+        div.className = "datashow-option";
+        div.id = `ds_opt_${opt.letter}`;
+        div.innerHTML = `<strong>${opt.letter})</strong> ${opt.text}`;
+        optsCont.appendChild(div);
+      });
+
+      // Esconder gabarito
+      dsState.revealed = false;
+      document.getElementById("dsGabaritoBox").style.display = "none";
+      document.getElementById("dsBtnReveal").textContent = "👁️ Revelar Gabarito e Pegadinhas";
+    }
+
+    function toggleDSGabarito() {
+      dsState.revealed = !dsState.revealed;
+      const gBox = document.getElementById("dsGabaritoBox");
+      const dayData = DAYS_DATA.find(d => d.day === dsState.day);
+      const q = dayData.questions[dsState.qIndex];
+
+      if (dsState.revealed) {
+        gBox.style.display = "block";
+        document.getElementById("dsBtnReveal").textContent = "🙈 Ocultar Gabarito";
+
+        const correctOpt = q.options.find(o => o.isCorrect);
+        document.getElementById("dsCorrectLetter").textContent = `Alternativa ${correctOpt.letter}`;
+        document.getElementById("dsExplanation").textContent = correctOpt.comment;
+
+        const dList = document.getElementById("dsDistratoresList");
+        dList.innerHTML = "";
+        q.options.filter(o => !o.isCorrect).forEach(opt => {
+          const item = document.createElement("div");
+          item.className = "distrator-item distrator-err";
+          item.innerHTML = `<strong>${opt.letter}:</strong> ${opt.distrator}`;
+          dList.appendChild(item);
+        });
+
+        // Destacar visualmente na lista de opções
+        q.options.forEach(opt => {
+          const el = document.getElementById(`ds_opt_${opt.letter}`);
+          if (el) {
+            if (opt.isCorrect) {
+              el.style.borderColor = "#22c55e";
+              el.style.background = "#f0fdf4";
+              el.style.fontWeight = "bold";
+            } else {
+              el.style.borderColor = "#fca5a5";
+              el.style.opacity = "0.75";
+            }
+          }
+        });
+      } else {
+        gBox.style.display = "none";
+        document.getElementById("dsBtnReveal").textContent = "👁️ Revelar Gabarito e Pegadinhas";
+        q.options.forEach(opt => {
+          const el = document.getElementById(`ds_opt_${opt.letter}`);
+          if (el) {
+            el.style.borderColor = "#cbd5e1";
+            el.style.background = "#fff";
+            el.style.fontWeight = "normal";
+            el.style.opacity = "1";
+          }
+        });
+      }
+    }
+
+    function dsNextQuestion() {
+      const dayData = DAYS_DATA.find(d => d.day === dsState.day);
+      if (dsState.qIndex < dayData.questions.length - 1) {
+        dsState.qIndex++;
+        renderDataShowQuestion();
+      } else {
+        alert("Você já está na última questão desta atividade.");
+      }
+    }
+
+    function dsPrevQuestion() {
+      if (dsState.qIndex > 0) {
+        dsState.qIndex--;
+        renderDataShowQuestion();
+      }
+    }
+
+    function toggleFullScreen() {
+      const el = document.getElementById("datashowCard");
+      if (!el) return;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (el.requestFullscreen) {
+          el.requestFullscreen().catch(() => {
+            el.classList.toggle("fullscreen-fallback");
+          });
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        } else {
+          el.classList.toggle("fullscreen-fallback");
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        el.classList.remove("fullscreen-fallback");
+      }
+    }
+=======
+    /* =====================================================================
+       8. MODO DATA SHOW REESCRITO DO ZERO (OVERLAY INDEPENDENTE DA FULLSCREEN API)
+       ===================================================================== */
+    let dsOverlayState = {
+      day: 1,
+      qIndex: 0,
+      revealed: false,
+      selectedOptionIndex: null
+    };
+
+    function triggerDataShowChooser() {
+      const modal = document.getElementById("dsDayChooserModal");
+      if (modal) modal.style.display = "flex";
+    }
+
+    function closeDataShowChooser() {
+      const modal = document.getElementById("dsDayChooserModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function openDataShowOverlay(dayNum) {
+      closeDataShowChooser();
+      dsOverlayState.day = parseInt(dayNum, 10) || 1;
+      dsOverlayState.qIndex = 0;
+      dsOverlayState.revealed = false;
+      dsOverlayState.selectedOptionIndex = null;
+
+      const overlay = document.getElementById("datashowOverlay");
+      overlay.style.display = "block";
+      document.body.style.overflow = "hidden"; // Trava o scroll da página
+
+      renderDataShowOverlayContent();
+    }
+
+    function closeDataShowOverlay() {
+      const overlay = document.getElementById("datashowOverlay");
+      overlay.style.display = "none";
+      document.body.style.overflow = ""; // Restaura o scroll da página
+      dsOverlayState.revealed = false;
+    }
+
+    function renderDataShowOverlayContent() {
+      const dayData = DAYS_DATA.find(d => d.day === dsOverlayState.day);
+      const emptyState = document.getElementById("dsEmptyState");
+      const wrapper = document.getElementById("dsQuestionWrapper");
+
+      if (!dayData || !dayData.questions || dayData.questions.length === 0) {
+        if (emptyState) emptyState.style.display = "block";
+        if (wrapper) wrapper.style.display = "none";
+        document.getElementById("dsHeaderTitle").textContent = `MODO DATA SHOW — DIA ${dsOverlayState.day}`;
+        return;
+      }
+
+      if (emptyState) emptyState.style.display = "none";
+      if (wrapper) wrapper.style.display = "block";
+
+      const totalQ = dayData.questions.length;
+      const q = dayData.questions[dsOverlayState.qIndex];
+
+      document.getElementById("dsHeaderTitle").textContent = `MODO DATA SHOW — DIA ${dayData.day} (${dayData.descritor})`;
+      document.getElementById("dsHeaderSubtitle").textContent = `${dayData.title} • SPAECE 9º Ano • Projeção Ampliada`;
+
+      document.getElementById("dsOverlayQNumber").textContent = `Questão ${dsOverlayState.qIndex + 1} de ${totalQ}`;
+      document.getElementById("dsOverlayDescritorBadge").textContent = `Descritor ${q.tag || dayData.descritor}`;
+
+      const difBadge = document.getElementById("dsOverlayDificuldadeBadge");
+      difBadge.textContent = q.difficulty || "Média";
+      difBadge.style.background = (q.difficulty === "Difícil") ? "#fee2e2" : "#fef3c7";
+      difBadge.style.color = (q.difficulty === "Difícil") ? "#991b1b" : "#92400e";
+
+      // Texto-base
+      document.getElementById("dsOverlayStem").innerHTML = `
+        <div style="font-size:1.32rem; line-height:1.75;">${q.stem}</div>
+        <div style="font-size:0.92rem; color:#64748b; font-style:italic; margin-top:1rem; text-align:right;">${q.source || ""}</div>
+      `;
+
+      // Enunciado
+      document.getElementById("dsOverlayEnunciado").textContent = q.question;
+
+      // Alternativas A-D em cards grandes
+      const optsBox = document.getElementById("dsOverlayOptionsList");
+      optsBox.innerHTML = "";
+      dsOverlayState.selectedOptionIndex = null;
+
+      q.options.forEach((opt, idx) => {
+        const card = document.createElement("div");
+        card.id = `ds_opt_card_${idx}`;
+        card.style.cssText = `
+          display: flex;
+          align-items: flex-start;
+          gap: 1.2rem;
+          padding: 1.2rem 1.4rem;
+          border: 2px solid #cbd5e1;
+          border-radius: 10px;
+          background: #ffffff;
+          cursor: pointer;
+          font-size: 1.25rem;
+          line-height: 1.5;
+          transition: all 0.15s ease;
+        `;
+        card.onclick = () => dsHighlightOption(idx);
+
+        card.innerHTML = `
+          <div id="ds_opt_letter_${idx}" style="width:38px; height:38px; border-radius:50%; background:#e2e8f0; color:#1e293b; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.15rem; flex-shrink:0;">
+            ${opt.letter}
+          </div>
+          <div style="flex:1; padding-top:2px;">
+            ${opt.text}
+          </div>
+        `;
+        optsBox.appendChild(card);
+      });
+
+      // Esconder Gabarito inicial
+      dsOverlayState.revealed = false;
+      const gBox = document.getElementById("dsOverlayGabaritoBox");
+      gBox.style.display = "none";
+      const btnRev = document.getElementById("dsOverlayBtnReveal");
+      btnRev.innerHTML = "👁️ REVELAR RESPOSTA";
+      btnRev.style.background = "#f59e0b";
+      btnRev.style.color = "#78350f";
+
+      // Contador e botões inferiores
+      document.getElementById("dsOverlayCounterBottom").textContent = `Questão ${dsOverlayState.qIndex + 1} de ${totalQ}`;
+      document.getElementById("dsOverlayBtnPrev").disabled = (dsOverlayState.qIndex === 0);
+      document.getElementById("dsOverlayBtnPrev").style.opacity = (dsOverlayState.qIndex === 0) ? "0.4" : "1";
+      document.getElementById("dsOverlayBtnNext").disabled = (dsOverlayState.qIndex === totalQ - 1);
+      document.getElementById("dsOverlayBtnNext").style.opacity = (dsOverlayState.qIndex === totalQ - 1) ? "0.4" : "1";
+    }
+
+    function dsHighlightOption(idx) {
+      if (dsOverlayState.revealed) return; // Não altera se já revelado
+      dsOverlayState.selectedOptionIndex = idx;
+      const dayData = DAYS_DATA.find(d => d.day === dsOverlayState.day);
+      const q = dayData.questions[dsOverlayState.qIndex];
+
+      q.options.forEach((_, i) => {
+        const card = document.getElementById(`ds_opt_card_${i}`);
+        const letter = document.getElementById(`ds_opt_letter_${i}`);
+        if (!card) return;
+        if (i === idx) {
+          card.style.borderColor = "#2563eb";
+          card.style.background = "#eff6ff";
+          if (letter) { letter.style.background = "#2563eb"; letter.style.color = "#fff"; }
+        } else {
+          card.style.borderColor = "#cbd5e1";
+          card.style.background = "#ffffff";
+          if (letter) { letter.style.background = "#e2e8f0"; letter.style.color = "#1e293b"; }
+        }
+      });
+    }
+
+    function dsToggleRevealAnswer() {
+      const dayData = DAYS_DATA.find(d => d.day === dsOverlayState.day);
+      if (!dayData) return;
+      const q = dayData.questions[dsOverlayState.qIndex];
+      const gBox = document.getElementById("dsOverlayGabaritoBox");
+      const btnRev = document.getElementById("dsOverlayBtnReveal");
+
+      dsOverlayState.revealed = !dsOverlayState.revealed;
+
+      if (dsOverlayState.revealed) {
+        // Revelar resposta
+        gBox.style.display = "block";
+        btnRev.innerHTML = "🙈 OCULTAR RESPOSTA";
+        btnRev.style.background = "#64748b";
+        btnRev.style.color = "#ffffff";
+
+        const correctOpt = q.options.find(o => o.isCorrect);
+        document.getElementById("dsOverlayGabaritoTitle").textContent = `Resposta Correta: Alternativa ${correctOpt.letter}`;
+        document.getElementById("dsOverlayGabaritoComment").innerHTML = `
+          <strong>Justificativa Pedagógica:</strong> ${correctOpt.comment || "Resposta correta conforme os parâmetros da matriz do SPAECE."}
+        `;
+
+        // Distratores
+        const distBox = document.getElementById("dsOverlayDistratoresList");
+        distBox.innerHTML = "";
+        q.options.filter(o => !o.isCorrect).forEach(opt => {
+          const item = document.createElement("div");
+          item.style.cssText = `
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            color: #991b1b;
+            line-height: 1.5;
+          `;
+          item.innerHTML = `<strong>Alternativa ${opt.letter} (Incorreta):</strong> <em>${opt.distrator || "Distrator elaborado para induzir a erro conceitual."}</em>`;
+          distBox.appendChild(item);
+        });
+
+        // Pintar a alternativa correta de verde vibrante e as erradas em tom neutro
+        q.options.forEach((opt, i) => {
+          const card = document.getElementById(`ds_opt_card_${i}`);
+          const letter = document.getElementById(`ds_opt_letter_${i}`);
+          if (!card) return;
+          if (opt.isCorrect) {
+            card.style.borderColor = "#16a34a";
+            card.style.background = "#dcfce7";
+            card.style.boxShadow = "0 0 0 3px rgba(22,163,74,0.3)";
+            card.style.fontWeight = "700";
+            if (letter) { letter.style.background = "#16a34a"; letter.style.color = "#fff"; }
+          } else {
+            card.style.borderColor = "#e2e8f0";
+            card.style.background = "#f8fafc";
+            card.style.opacity = "0.7";
+            card.style.boxShadow = "none";
+            if (letter) { letter.style.background = "#e2e8f0"; letter.style.color = "#64748b"; }
+          }
+        });
+
+        // Scroll suave até o gabarito
+        setTimeout(() => {
+          gBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 100);
+
+      } else {
+        // Ocultar resposta
+        gBox.style.display = "none";
+        btnRev.innerHTML = "👁️ REVELAR RESPOSTA";
+        btnRev.style.background = "#f59e0b";
+        btnRev.style.color = "#78350f";
+
+        q.options.forEach((_, i) => {
+          const card = document.getElementById(`ds_opt_card_${i}`);
+          const letter = document.getElementById(`ds_opt_letter_${i}`);
+          if (!card) return;
+          card.style.borderColor = "#cbd5e1";
+          card.style.background = "#ffffff";
+          card.style.opacity = "1";
+          card.style.fontWeight = "normal";
+          card.style.boxShadow = "none";
+          if (letter) { letter.style.background = "#e2e8f0"; letter.style.color = "#1e293b"; }
+        });
+      }
+    }
+
+    function dsNextQuestionOverlay() {
+      const dayData = DAYS_DATA.find(d => d.day === dsOverlayState.day);
+      if (!dayData) return;
+      if (dsOverlayState.qIndex < dayData.questions.length - 1) {
+        dsOverlayState.qIndex++;
+        renderDataShowOverlayContent();
+        const topEl = document.getElementById("datashowOverlay");
+        if (topEl) topEl.scrollTop = 0;
+      }
+    }
+
+    function dsPrevQuestionOverlay() {
+      if (dsOverlayState.qIndex > 0) {
+        dsOverlayState.qIndex--;
+        renderDataShowOverlayContent();
+        const topEl = document.getElementById("datashowOverlay");
+        if (topEl) topEl.scrollTop = 0;
+      }
+    }=====================================================================
+       1. CONSTANTES PEDAGÓGICAS E LISTA DE ALUNOS (20 ESTUDANTES)
+       ===================================================================== */
+    const STUDENTS = [
+      { id: "1001", name: "Alice Rodrigues Amancio" },
+      { id: "1002", name: "Ana Júlia Vieira Gomes" },
+      { id: "1003", name: "Francisca Carolina Venâncio do Nascimento" },
+      { id: "1004", name: "Francisca Myllena Soares Chaves" },
+      { id: "1005", name: "Francisco Erick Vieira Soares" },
+      { id: "1006", name: "Francisco Luan da Silva Andrade" },
+      { id: "1007", name: "Gustavo Henrique de Sousa Barbosa" },
+      { id: "1008", name: "Jamili da Silva Bezerra" },
+      { id: "1009", name: "João Victor Gonçalves da Silva" },
+      { id: "1010", name: "João Vitor de Sousa Alves" },
+      { id: "1011", name: "José Maikon Ferreira Muniz" },
+      { id: "1012", name: "José Wedson Gonçalves Laurentino da Silva" },
+      { id: "1013", name: "Luis Henrique Ximenes Torres" },
+      { id: "1014", name: "Maria Cecília Oliveira Sousa" },
+      { id: "1015", name: "Maria Lauanda Alves Costa" },
+      { id: "1016", name: "Maria Milena de Sousa Machado" },
+      { id: "1017", name: "Maria Rita Coelho da Silva" },
+      { id: "1018", name: "Pedro Carlos Lopes da Silva" },
+      { id: "1019", name: "Rosiane Ximenes de Sousa" },
+      { id: "1020", name: "Vitor Maciel Ribeiro Barbosa" }
+    ];
+
+    // Níveis por % de acerto acumulado
+    const CUTOFF_AVANCADO = 80;
+    const CUTOFF_ADEQUADO = 60;
+
+    // Metas de distribuição calculadas proporcionalmente (14 Avançados [70%], 4 Adequados [20%], 2 Básicos [10%])
+    const TARGET_AVANCADO_COUNT = Math.round(STUDENTS.length * 0.70); // 14 para 20
+    const TARGET_ADEQUADO_COUNT = Math.round(STUDENTS.length * 0.20); // 4 para 20
+    const TARGET_BASICO_COUNT = STUDENTS.length - TARGET_AVANCADO_COUNT - TARGET_ADEQUADO_COUNT; // 2 para 20Brand Header */
     .school-bar {
       background: #0f172a;
       color: #f8fafc;
@@ -390,6 +876,18 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       border: 2px solid #1e40af;
     }
+    .datashow-view.fullscreen-fallback {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+      overflow-y: auto !important;
+      border-radius: 0 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+    }
     .datashow-stem {
       font-size: 1.35rem;
       line-height: 1.7;
@@ -446,7 +944,63 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
   <!-- SCHOOL BRAND BAR -->
   <header class="school-bar">
-    <div><strong>E.M. Francisco Carlos de Pinho</strong> — Assentamento São José, Crateús-CE</div>
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <svg width="140" height="40" viewBox="0 0 320 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:40px; width:auto;" role="img" aria-label="Logotipo Oficial CFP">
+        <defs>
+          <filter id="cfp-shadow-sm" x="-20%" y="-20%" width="150%" height="150%">
+            <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-color="#070f26" flood-opacity="0.6"/>
+          </filter>
+          <linearGradient id="gold-grad-sm" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FDE047"/>
+            <stop offset="50%" stop-color="#D4A017"/>
+            <stop offset="100%" stop-color="#9A6B0A"/>
+          </linearGradient>
+          <path id="curve-top-sm" d="M 10,45 A 35,35 0 0,1 80,45" fill="none"/>
+        </defs>
+        <!-- Emblema circular oficial -->
+        <circle cx="45" cy="45" r="41" fill="#1B2A5B" stroke="url(#gold-grad-sm)" stroke-width="3"/>
+        <circle cx="45" cy="45" r="37" fill="none" stroke="#D4A017" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <!-- Texto curvo no topo -->
+        <text font-family="'Inter', sans-serif" font-weight="800" font-size="5" fill="#FDE047" letter-spacing="0.8">
+          <textPath href="#curve-top-sm" startOffset="50%" text-anchor="middle">FRANCISCO CARLOS DE PINHO</textPath>
+        </text>
+        <!-- Ícones: Livro aberto com silhueta e figuras com braços erguidos -->
+        <g transform="translate(45, 23) scale(0.65)" filter="url(#cfp-shadow-sm)">
+          <!-- Figuras humanas com braços erguidos -->
+          <circle cx="-10" cy="-3" r="2.2" fill="#FDE047"/>
+          <path d="M -14,3 Q -10,-1 -6,3 Q -10,1 -14,3" fill="#D4A017"/>
+          <circle cx="10" cy="-3" r="2.2" fill="#FDE047"/>
+          <path d="M 6,3 Q 10,-1 14,3 Q 10,1 6,3" fill="#D4A017"/>
+          <!-- Livro aberto com silhueta central -->
+          <path d="M -11,4 Q 0,1 11,4 L 10,9 Q 0,6 -10,9 Z" fill="#D4A017"/>
+          <circle cx="0" cy="1" r="2.3" fill="#ffffff"/>
+          <path d="M -3.5,6 Q 0,3.5 3.5,6 Z" fill="#ffffff"/>
+        </g>
+        <!-- Monograma CFP Entrelaçado com relevo e sombra -->
+        <g filter="url(#cfp-shadow-sm)">
+          <text x="31" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="21" fill="#0b132b">C</text>
+          <text x="30" y="53" font-family="'Inter', sans-serif" font-weight="900" font-size="21" fill="url(#gold-grad-sm)">C</text>
+          <text x="31" y="53" font-family="'Inter', sans-serif" font-weight="900" font-size="19" fill="#1B2A5B">C</text>
+
+          <text x="44" y="56" font-family="'Inter', sans-serif" font-weight="900" font-size="23" fill="#0b132b">F</text>
+          <text x="43" y="55" font-family="'Inter', sans-serif" font-weight="900" font-size="23" fill="url(#gold-grad-sm)">F</text>
+          <text x="44" y="55" font-family="'Inter', sans-serif" font-weight="900" font-size="21" fill="#1B2A5B">F</text>
+
+          <text x="56" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="21" fill="#0b132b">P</text>
+          <text x="55" y="53" font-family="'Inter', sans-serif" font-weight="900" font-size="21" fill="url(#gold-grad-sm)">P</text>
+          <text x="56" y="53" font-family="'Inter', sans-serif" font-weight="900" font-size="19" fill="#1B2A5B">P</text>
+        </g>
+        <!-- Faixa central / Subtítulo e Slogan no emblema -->
+        <text x="45" y="67" font-family="'Inter', sans-serif" font-weight="800" font-size="4.2" fill="#FDE047" text-anchor="middle" letter-spacing="0.5">ESCOLA DE CIDADANIA</text>
+        <text x="45" y="78" font-family="'Inter', sans-serif" font-weight="500" font-size="3" fill="#ffffff" text-anchor="middle" font-style="italic">Educação que transforma</text>
+
+        <!-- Tipografia do Cabeçalho -->
+        <text x="100" y="36" font-family="'Inter', sans-serif" font-weight="800" font-size="14" fill="#ffffff">ESCOLA DE CIDADANIA</text>
+        <text x="100" y="54" font-family="'Inter', sans-serif" font-weight="700" font-size="13" fill="#FDE047">FRANCISCO CARLOS DE PINHO</text>
+        <text x="100" y="70" font-family="'Inter', sans-serif" font-weight="500" font-size="9" fill="#cbd5e1" font-style="italic">Educação que transforma, cidadania que inspira.</text>
+      </svg>
+      <div><strong>Escola de Cidadania Francisco Carlos de Pinho</strong> — Assentamento São José, Crateús-CE</div>
+    </div>
     <div>SPAECE 2026 • 9º Ano • Língua Portuguesa</div>
   </header>
 
@@ -467,16 +1021,72 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
   <main class="shell-container" style="margin-top: 1.2rem;">
 
     <!-- ==================== TELA 0: LOGIN ==================== -->
-    <section id="viewLogin" class="panel" style="max-width: 440px; margin: 3rem auto; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.06);">
+    <section id="viewLogin" class="panel" style="max-width: 480px; margin: 3rem auto; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.06);">
       <div style="text-align: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0 0 0.4rem 0; color: #1e3a8a;">Acesso à Trilha</h2>
-        <p class="muted" style="margin:0; font-size: 0.9rem;">Entre com suas credenciais escolares</p>
+        <div style="display:flex; justify-content:center; margin-bottom:0.75rem;">
+          <!-- LOGOTIPO OFICIAL DA ESCOLA CFP (~90px de altura, centralizada) -->
+          <svg width="240" height="90" viewBox="0 0 240 90" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:90px; width:auto; display:block; margin:0 auto;" role="img" aria-label="Logotipo Oficial da Escola de Cidadania Francisco Carlos de Pinho">
+            <defs>
+              <filter id="cfp-shadow-lg" x="-20%" y="-20%" width="150%" height="150%">
+                <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#070f26" flood-opacity="0.5"/>
+              </filter>
+              <linearGradient id="gold-grad-lg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FDE047"/>
+                <stop offset="50%" stop-color="#D4A017"/>
+                <stop offset="100%" stop-color="#9A6B0A"/>
+              </linearGradient>
+              <path id="curve-top-login" d="M 68,45 A 52,52 0 0,1 172,45" fill="none"/>
+            </defs>
+            <!-- Círculo e anel dourado externo -->
+            <circle cx="120" cy="45" r="43" fill="#1B2A5B" stroke="url(#gold-grad-lg)" stroke-width="3.5" filter="url(#cfp-shadow-lg)"/>
+            <circle cx="120" cy="45" r="38" fill="none" stroke="#D4A017" stroke-width="1" stroke-dasharray="2,2"/>
+            <!-- Texto curvo no topo: FRANCISCO CARLOS DE PINHO -->
+            <text font-family="'Inter', sans-serif" font-weight="800" font-size="5.2" fill="#FDE047" letter-spacing="0.7">
+              <textPath href="#curve-top-login" startOffset="50%" text-anchor="middle">FRANCISCO CARLOS DE PINHO</textPath>
+            </text>
+            <!-- Ícones: Livro aberto com silhueta e duas figuras humanas com braços erguidos -->
+            <g transform="translate(120, 22) scale(0.72)" filter="url(#cfp-shadow-lg)">
+              <!-- Figura esquerda com braços erguidos -->
+              <circle cx="-13" cy="-3" r="2.4" fill="#FDE047"/>
+              <path d="M -18,4 Q -13,-1 -8,4 Q -13,1.5 -18,4" fill="#D4A017"/>
+              <!-- Figura direita com braços erguidos -->
+              <circle cx="13" cy="-3" r="2.4" fill="#FDE047"/>
+              <path d="M 8,4 Q 13,-1 18,4 Q 13,1.5 8,4" fill="#D4A017"/>
+              <!-- Livro aberto central com silhueta humana -->
+              <path d="M -13,5 Q 0,1.5 13,5 L 12,11 Q 0,7.5 -12,11 Z" fill="#D4A017"/>
+              <circle cx="0" cy="1.5" r="2.5" fill="#ffffff"/>
+              <path d="M -4,7.5 Q 0,4.5 4,7.5 Z" fill="#ffffff"/>
+            </g>
+            <!-- Monograma CFP ENTRELAÇADO com relevo e sombreamento -->
+            <g filter="url(#cfp-shadow-lg)">
+              <!-- Sombra de relevo -->
+              <text x="103" y="55" font-family="'Inter', sans-serif" font-weight="900" font-size="24" fill="#070f26">C</text>
+              <text x="102" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="24" fill="url(#gold-grad-lg)">C</text>
+              <text x="103" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="22" fill="#1B2A5B">C</text>
+
+              <text x="119" y="58" font-family="'Inter', sans-serif" font-weight="900" font-size="27" fill="#070f26">F</text>
+              <text x="118" y="57" font-family="'Inter', sans-serif" font-weight="900" font-size="27" fill="url(#gold-grad-lg)">F</text>
+              <text x="119" y="57" font-family="'Inter', sans-serif" font-weight="900" font-size="25" fill="#1B2A5B">F</text>
+
+              <text x="134" y="55" font-family="'Inter', sans-serif" font-weight="900" font-size="24" fill="#070f26">P</text>
+              <text x="133" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="24" fill="url(#gold-grad-lg)">P</text>
+              <text x="134" y="54" font-family="'Inter', sans-serif" font-weight="900" font-size="22" fill="#1B2A5B">P</text>
+            </g>
+            <!-- Texto central: ESCOLA DE CIDADANIA -->
+            <text x="120" y="69" font-family="'Inter', sans-serif" font-weight="800" font-size="4.8" fill="#FDE047" text-anchor="middle" letter-spacing="0.6">ESCOLA DE CIDADANIA</text>
+            <!-- Slogan no rodapé do emblema -->
+            <text x="120" y="80" font-family="'Inter', sans-serif" font-weight="500" font-size="3.2" fill="#ffffff" text-anchor="middle" font-style="italic">Educação que transforma, cidadania que inspira.</text>
+          </svg>
+        </div>
+        <h2 style="margin: 0 0 0.3rem 0; color: #1B2A5B; font-size: 1.25rem;">Escola de Cidadania Francisco Carlos de Pinho</h2>
+        <p style="margin: 0 0 0.75rem 0; font-size: 0.88rem; color: #D4A017; font-weight: 700; font-style: italic;">“Educação que transforma, cidadania que inspira.”</p>
+        <p class="muted" style="margin:0; font-size: 0.88rem;">Entre com suas credenciais para acessar a Trilha SPAECE</p>
       </div>
 
       <form id="loginForm" onsubmit="handleLogin(event)" style="display:flex; flex-direction:column; gap:1rem;">
         <div>
           <label style="display:block; font-size: 0.85rem; font-weight:600; margin-bottom: 0.3rem;" for="loginUser">Matrícula ou Usuário</label>
-          <input type="text" id="loginUser" required placeholder="Ex.: 1001, professor, coordenador, diretor" class="input" style="width:100%; box-sizing:border-box; padding:0.65rem 0.8rem; border:1px solid #cbd5e1; border-radius:6px; font-size:1rem;">
+          <input type="text" id="loginUser" required placeholder="Ex.: 1001 a 1020, professor, coordenador, diretor" class="input" style="width:100%; box-sizing:border-box; padding:0.65rem 0.8rem; border:1px solid #cbd5e1; border-radius:6px; font-size:1rem;">
         </div>
         <div>
           <label style="display:block; font-size: 0.85rem; font-weight:600; margin-bottom: 0.3rem;" for="loginPass">Senha</label>
@@ -485,7 +1095,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
         <div id="loginError" style="display:none; color: var(--danger); font-size:0.85rem; font-weight:600;"></div>
 
-        <button type="submit" class="btn btn-primary" style="background: #1d4ed8; color: #fff; padding:0.75rem; font-size:1rem; font-weight:700; border-radius:6px; border:none; cursor:pointer;">
+        <button type="submit" class="btn btn-primary" style="background: #1B2A5B; color: #fff; padding:0.75rem; font-size:1rem; font-weight:700; border-radius:6px; border:none; cursor:pointer;">
           Entrar na Plataforma
         </button>
       </form>
@@ -507,7 +1117,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <button class="tab-btn active" id="tabTrilhaBtn" onclick="switchTab('trilha')">📍 Trilha dos 40 Dias</button>
         <button class="tab-btn" id="tabAtividadeBtn" style="display:none;" onclick="switchTab('atividade')">✍️ Atividade do Dia</button>
         <button class="tab-btn" id="tabProfessorBtn" style="display:none;" onclick="switchTab('professor')">👨‍🏫 Módulo Docente & Frequência</button>
-        <button class="tab-btn" id="tabDataShowBtn" style="display:none;" onclick="switchTab('datashow')">📽️ Modo Data Show</button>
+        <button class="tab-btn" id="tabDataShowBtn" style="display:none;" onclick="triggerDataShowChooser()">📽️ Modo Data Show</button>
         <button class="tab-btn" id="tabDashboardBtn" style="display:none;" onclick="switchTab('dashboard')">📊 Dashboard Gerencial 80/20</button>
       </nav>
 
@@ -637,8 +1247,21 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       <!-- ==================== ABA 3: MÓDULO DOCENTE & FREQUÊNCIA ==================== -->
       <section id="tabProfessorSection" style="display:none;">
         <div class="panel" style="margin-bottom: 1.2rem;">
-          <h2 style="margin-top:0; color:#1e3a8a;">👨‍🏫 Painel Pedagógico do Professor Ary Gomes</h2>
-          <p class="muted">Gerenciamento de aulas, liberação antecipada da trava pedagógica e controle diário de frequência da turma de 20 alunos.</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h2 style="margin-top:0; margin-bottom:0.3rem; color:#1e3a8a;">👨‍🏫 Painel Pedagógico do Professor Ary Gomes</h2>
+              <p class="muted" style="margin:0;">Gerenciamento de aulas, liberação antecipada da trava pedagógica e controle diário de frequência da turma de 20 alunos.</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+              <span id="teacherReleasedCountBadge" class="brand-badge" style="background:#dbeafe; color:#1e40af; font-size:0.85rem; padding:0.35rem 0.75rem; border:1px solid #bfdbfe; font-weight:700;">6 / 40 — Dias liberados</span>
+              <button class="btn btn-primary" onclick="triggerDataShowChooser()" style="background:#1B2A5B; color:#fff; font-weight:700; padding:0.6rem 1.2rem; border-radius:8px; display:inline-flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                📽️ Abrir Modo Data Show
+              </button>
+              <button class="btn" onclick="resetClassData()" style="background:#dc2626; color:#ffffff; font-weight:800; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px; border:none; display:inline-flex; align-items:center; gap:0.4rem; cursor:pointer; box-shadow:0 2px 6px rgba(220,38,38,0.25);" title="Apaga todas as respostas e zera os registros da turma">
+                🗑️ ZERAR DADOS DA TURMA
+              </button>
+            </div>
+          </div>
 
           <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem; align-items:center;">
             <label style="font-weight:600;">Selecione o Dia de Aula:</label>
@@ -708,72 +1331,180 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         </div>
 
         <!-- Relatório de Não Participantes -->
-        <div class="panel">
+        <div class="panel" style="margin-bottom: 1.5rem;">
           <h3 style="margin-top:0; color:#b91c1c;">⚠️ Alunos Sem Participação na Atividade</h3>
           <p class="muted" style="font-size:0.88rem;">Estudantes matriculados que ainda não enviaram as respostas da atividade do dia selecionado:</p>
           <div id="unparticipatedList" style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.8rem;">
             <!-- JS -->
           </div>
         </div>
-      </section>
 
-      <!-- ==================== ABA 4: MODO DATA SHOW (PROJETOR) ==================== -->
-      <section id="tabDataShowSection" style="display:none;">
-        <div class="panel" style="background:#f1f5f9; border-bottom:3px solid #1e40af; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem;">
-          <div>
-            <h2 style="margin:0; color:#1e3a8a;">📽️ Projeção em Sala de Aula (Data Show)</h2>
-            <p class="muted" style="margin:0; font-size:0.88rem;">Tipografia ampliada para lousa digital e projetor. Clique para revelar resposta e distratores comentados.</p>
+        <!-- Painel Credenciais da Turma -->
+        <div class="panel" style="border-top: 4px solid #1B2A5B;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <h3 style="margin:0; color:#1B2A5B;">🔑 Credenciais de Acesso da Turma (20 Alunos)</h3>
+              <p class="muted" style="margin:0; font-size:0.85rem;">Consulta rápida de matrícula, nome e senha padrão para suporte aos estudantes.</p>
+            </div>
+            <span class="brand-badge" style="background:#dbeafe; color:#1e40af;">Exclusivo Equipe Pedagógica</span>
           </div>
-          <div style="display:flex; gap:0.5rem; align-items:center;">
-            <select id="dsDaySelect" onchange="dsChangeDay()" style="font-size:1rem; padding:0.4rem 0.8rem; border-radius:6px; border:1px solid #94a3b8; font-weight:700;">
-              <option value="1">Dia 1 (D01-A)</option>
-              <option value="2">Dia 2 (D01-B)</option>
-              <option value="3">Dia 3 (D04-A)</option>
-              <option value="4">Dia 4 (D04-B)</option>
-              <option value="5">Dia 5 (D03-A)</option>
-              <option value="6">Dia 6 (D03-B)</option>
-            </select>
-            <button class="btn" onclick="toggleFullScreen()" style="font-weight:700; background:#fff; border:1px solid #cbd5e1; padding:0.4rem 0.8rem; border-radius:6px; cursor:pointer;">⛶ Tela Cheia</button>
+          <div class="table-container" style="max-height: 400px;">
+            <table class="shell-table" style="width:100%; font-size:0.88rem;">
+              <thead>
+                <tr>
+                  <th>Nº</th>
+                  <th>Matrícula</th>
+                  <th>Nome Completo do Estudante</th>
+                  <th>Senha Padrão</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="credentialsTbody">
+                <!-- JS -->
+              </tbody>
+            </table>
           </div>
         </div>
+      </section>
 
-        <div class="datashow-view" id="datashowCard">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid #e2e8f0; padding-bottom:0.5rem;">
-            <span style="font-size:1.1rem; font-weight:800; color:#1e40af;" id="dsQIndex">Questão 1 de 5</span>
-            <span class="day-badge" id="dsQDificuldade" style="font-size:0.95rem; background:#fee2e2; color:#991b1b; padding:0.3rem 0.7rem;">Difícil</span>
+      <!-- ==================== MODAL SELETOR DO DIA PARA DATA SHOW ==================== -->
+      <div id="dsDayChooserModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15,23,42,0.7); z-index:99998; align-items:center; justify-content:center; padding:1rem; box-sizing:border-box;">
+        <div style="background:#fff; border-radius:12px; max-width:480px; width:100%; padding:1.8rem; box-shadow:0 20px 40px rgba(0,0,0,0.25); border-top:5px solid #1B2A5B; position:relative;">
+          <button onclick="closeDataShowChooser()" style="position:absolute; top:1rem; right:1rem; border:none; background:#f1f5f9; color:#475569; width:32px; height:32px; border-radius:50%; font-size:1.1rem; cursor:pointer; font-weight:800; display:flex; align-items:center; justify-content:center;">✕</button>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+            <span style="font-size:1.6rem;">📽️</span>
+            <h3 style="margin:0; color:#1B2A5B; font-size:1.25rem;">Projeção Data Show — Selecione o Dia</h3>
           </div>
-
-          <div class="datashow-stem" id="dsStemText">
-            <!-- Texto da questão -->
-          </div>
-
-          <div style="font-size:1.3rem; font-weight:800; color:#0f172a; margin-bottom:1.2rem;" id="dsEnunciadoText">
-            <!-- Pergunta -->
-          </div>
-
-          <div id="dsOptionsContainer">
-            <!-- Alternativas em fonte grande -->
-          </div>
-
-          <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
-            <button class="btn btn-primary" onclick="toggleDSGabarito()" id="dsBtnReveal" style="background:#f59e0b; color:#78350f; font-weight:800; font-size:1.1rem; padding:0.7rem 1.4rem; border:none; border-radius:8px; cursor:pointer;">
-              👁️ Revelar Gabarito e Pegadinhas
+          <p class="muted" style="font-size:0.88rem; margin-top:0.2rem; margin-bottom:1.2rem;">Escolha qual aula deseja projetar em tela cheia na lousa digital com tipografia ampliada:</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;">
+            <button onclick="openDataShowOverlay(1)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 1</strong>
+              <span>D01-A: Info. Explícita</span>
             </button>
-            <div style="margin-left:auto; display:flex; gap:0.5rem;">
-              <button class="btn" onclick="dsPrevQuestion()" style="font-size:1rem; padding:0.6rem 1rem; border-radius:6px; border:1px solid #cbd5e1; cursor:pointer;">◀ Anterior</button>
-              <button class="btn btn-primary" onclick="dsNextQuestion()" style="background:#1d4ed8; color:#fff; font-size:1rem; padding:0.6rem 1.2rem; border-radius:6px; border:none; cursor:pointer;">Próxima ▶</button>
+            <button onclick="openDataShowOverlay(2)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 2</strong>
+              <span>D01-B: Desarmar Ciladas</span>
+            </button>
+            <button onclick="openDataShowOverlay(3)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 3</strong>
+              <span>D04-A: Info. Implícita</span>
+            </button>
+            <button onclick="openDataShowOverlay(4)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 4</strong>
+              <span>D04-B: Subentendidos</span>
+            </button>
+            <button onclick="openDataShowOverlay(5)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 5</strong>
+              <span>D03-A: Sentido de Palavras</span>
+            </button>
+            <button onclick="openDataShowOverlay(6)" class="btn" style="text-align:left; padding:0.75rem; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; cursor:pointer; font-size:0.88rem;">
+              <strong style="color:#1d4ed8; display:block;">Dia 6</strong>
+              <span>D03-B: Sentido Figurado</span>
+            </button>
+          </div>
+          <div style="margin-top:1.2rem; text-align:right;">
+            <button onclick="closeDataShowChooser()" class="btn" style="background:#e2e8f0; color:#334155; font-weight:600; padding:0.5rem 1rem; border:none; border-radius:6px; cursor:pointer;">Cancelar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== OVERLAY REESCRITO DO MODO DATA SHOW (Z-INDEX: 99999) ==================== -->
+      <div id="datashowOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; background:#ffffff; overflow-y:auto; box-sizing:border-box;">
+        <!-- Cabeçalho Fixo do Data Show com Botão Sair -->
+        <div style="position:sticky; top:0; background:#1B2A5B; color:#ffffff; padding:0.8rem 1.5rem; display:flex; justify-content:space-between; align-items:center; z-index:10; border-bottom:3px solid #D4A017; box-shadow:0 3px 10px rgba(0,0,0,0.15);">
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span style="font-size:1.6rem;">📽️</span>
+            <div>
+              <div style="font-weight:800; font-size:1.15rem; letter-spacing:0.3px;" id="dsHeaderTitle">MODO DATA SHOW — PROJEÇÃO DE AULA</div>
+              <div style="font-size:0.82rem; color:#FDE047;" id="dsHeaderSubtitle">SPAECE 2026 • 9º Ano • Escola de Cidadania Francisco Carlos de Pinho</div>
             </div>
           </div>
-
-          <!-- Gabarito Revelado no Data Show -->
-          <div id="dsGabaritoBox" style="display:none; margin-top:1.5rem; padding:1.2rem; background:#f0fdf4; border:2px solid #22c55e; border-radius:10px;">
-            <h3 style="color:#166534; margin-top:0; font-size:1.25rem;">✅ Resposta Correta: <span id="dsCorrectLetter"></span></h3>
-            <div id="dsExplanation" style="font-size:1.1rem; line-height:1.6; color:#14532d; margin-bottom:1rem;"></div>
-            <h4 style="color:#991b1b; margin-bottom:0.4rem; font-size:1.05rem;">🚫 Análise dos Distratores (Pegadinhas SPAECE):</h4>
-            <div id="dsDistratoresList"></div>
+          <div style="display:flex; align-items:center; gap:0.8rem;">
+            <button onclick="triggerDataShowChooser()" style="background:#24366e; color:#f8fafc; border:1px solid #4a5d99; padding:0.5rem 0.9rem; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85rem;">
+              🔄 Trocar Dia
+            </button>
+            <button onclick="closeDataShowOverlay()" style="background:#dc2626; color:#ffffff; border:none; padding:0.5rem 1.1rem; border-radius:6px; font-weight:800; font-size:0.95rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.3rem; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+              ✕ SAIR
+            </button>
           </div>
         </div>
-      </section>
+
+        <!-- Conteúdo Centralizado da Questão -->
+        <div style="max-width:1100px; margin:0 auto; padding:1.8rem 1.5rem 4rem 1.5rem;">
+          
+          <!-- Mensagem para dia sem questões -->
+          <div id="dsEmptyState" style="display:none; text-align:center; padding:4rem 1rem; background:#f8fafc; border-radius:12px; border:2px dashed #cbd5e1;">
+            <h2 style="color:#64748b; margin-top:0;">Nenhuma questão cadastrada para este dia</h2>
+            <p style="color:#94a3b8; font-size:1.1rem;">O conteúdo pedagógico para este dia está em preparação e estará disponível em breve.</p>
+            <button onclick="triggerDataShowChooser()" class="btn btn-primary" style="background:#1B2A5B; color:#fff; padding:0.7rem 1.5rem; border-radius:8px; font-weight:700; font-size:1rem; cursor:pointer; margin-top:1rem;">
+              Escolher Outro Dia
+            </button>
+          </div>
+
+          <!-- Card Ativo da Questão -->
+          <div id="dsQuestionWrapper">
+            <!-- Barra Superior do Item -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:2px solid #e2e8f0; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <span style="font-size:1.25rem; font-weight:800; color:#1B2A5B;" id="dsOverlayQNumber">Questão 1 de 5</span>
+                <span style="font-size:0.95rem; font-weight:700; color:#64748b; margin-left:0.5rem;" id="dsOverlayDescritorBadge">Descritor D01-A</span>
+              </div>
+              <span id="dsOverlayDificuldadeBadge" style="background:#fef3c7; color:#92400e; font-weight:800; font-size:0.95rem; padding:0.3rem 0.8rem; border-radius:6px;">Média</span>
+            </div>
+
+            <!-- Texto-Base Completo em Caixa Destacada -->
+            <div style="background:#f8fafc; border:2px solid #cbd5e1; border-left:8px solid #1B2A5B; border-radius:10px; padding:1.8rem; font-size:1.35rem; line-height:1.75; color:#1e293b; margin-bottom:1.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.03);" id="dsOverlayStem">
+              <!-- Inserido dinamicamente -->
+            </div>
+
+            <!-- Enunciado em Fonte Grande -->
+            <div style="font-size:1.45rem; font-weight:800; color:#0f172a; line-height:1.5; margin-bottom:1.5rem; background:#eff6ff; padding:1.1rem 1.4rem; border-radius:8px; border:1px solid #bfdbfe;" id="dsOverlayEnunciado">
+              <!-- Inserido dinamicamente -->
+            </div>
+
+            <!-- Alternativas A-D em Cards Grandes Clicáveis apenas para destaque visual -->
+            <div id="dsOverlayOptionsList" style="display:flex; flex-direction:column; gap:0.9rem; margin-bottom:1.8rem;">
+              <!-- Inserido dinamicamente -->
+            </div>
+
+            <!-- Botão Central REVELAR RESPOSTA -->
+            <div style="text-align:center; margin:1.8rem 0;">
+              <button id="dsOverlayBtnReveal" onclick="dsToggleRevealAnswer()" style="background:#f59e0b; color:#78350f; font-size:1.25rem; font-weight:900; letter-spacing:0.5px; padding:1rem 2.2rem; border-radius:10px; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(245,158,11,0.35); transition:transform 0.1s, background 0.15s;">
+                👁️ REVELAR RESPOSTA
+              </button>
+            </div>
+
+            <!-- Painel do Gabarito Comentado Completo -->
+            <div id="dsOverlayGabaritoBox" style="display:none; background:#f0fdf4; border:3px solid #22c55e; border-radius:12px; padding:1.8rem; margin-bottom:2rem; box-shadow:0 6px 18px rgba(34,197,94,0.12);">
+              <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.8rem;">
+                <span style="font-size:1.8rem;">✅</span>
+                <h3 style="margin:0; font-size:1.4rem; color:#15803d;" id="dsOverlayGabaritoTitle">Gabarito Oficial do SPAECE</h3>
+              </div>
+              <div id="dsOverlayGabaritoComment" style="font-size:1.2rem; line-height:1.6; color:#14532d; margin-bottom:1.2rem; background:#dcfce7; padding:1rem; border-radius:8px; border-left:5px solid #16a34a;">
+                <!-- Justificativa da correta -->
+              </div>
+              <h4 style="color:#991b1b; font-size:1.15rem; margin-bottom:0.6rem;">🚫 Análise dos Distratores Comentados (Ciladas):</h4>
+              <div id="dsOverlayDistratoresList" style="display:flex; flex-direction:column; gap:0.6rem;">
+                <!-- Distratores -->
+              </div>
+            </div>
+
+            <!-- Barra de Navegação na Base -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:2px solid #e2e8f0; padding-top:1.5rem; flex-wrap:wrap; gap:1rem;">
+              <button id="dsOverlayBtnPrev" onclick="dsPrevQuestionOverlay()" style="background:#f1f5f9; color:#1e293b; border:2px solid #cbd5e1; font-weight:800; font-size:1.1rem; padding:0.85rem 1.8rem; border-radius:8px; cursor:pointer;">
+                ◀ ANTERIOR
+              </button>
+              <div style="font-weight:800; font-size:1.2rem; color:#1B2A5B;" id="dsOverlayCounterBottom">
+                Questão 1 de 5
+              </div>
+              <button id="dsOverlayBtnNext" onclick="dsNextQuestionOverlay()" style="background:#1B2A5B; color:#ffffff; border:none; font-weight:800; font-size:1.1rem; padding:0.85rem 1.8rem; border-radius:8px; cursor:pointer;">
+                PRÓXIMA ▶
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
       <!-- ==================== ABA 5: DASHBOARD GERENCIAL 80/20 ==================== -->
       <section id="tabDashboardSection" style="display:none;">
@@ -801,17 +1532,17 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
           <div style="margin-top:0.8rem; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; align-items:center;">
             <div>
-              <div style="font-size:0.85rem; color:#64748b; font-weight:600;">Meta vs Realidade (20 Alunos):</div>
+              <div style="font-size:0.85rem; color:#64748b; font-weight:600;" id="metaVsRealTitle">Meta vs Realidade (20 Alunos):</div>
               <div style="font-size:0.95rem; margin-top:0.3rem;">
-                • <strong>Avançado (≥80%):</strong> Meta = 14 alunos | Atual = <span id="metaCountAvancado" style="font-weight:800; color:#16a34a;">0</span> alunos<br>
-                • <strong>Adequado (60-79%):</strong> Meta = 4 alunos | Atual = <span id="metaCountAdequado" style="font-weight:800; color:#2563eb;">0</span> alunos<br>
-                • <strong>Básico (&lt;60%):</strong> Meta = 2 alunos | Atual = <span id="metaCountBasico" style="font-weight:800; color:#dc2626;">0</span> alunos
+                • <strong>Avançado (≥80%):</strong> Meta = <span id="targetCountAvancado">14</span> alunos | Atual = <span id="metaCountAvancado" style="font-weight:800; color:#16a34a;">0</span> alunos<br>
+                • <strong>Adequado (60-79%):</strong> Meta = <span id="targetCountAdequado">4</span> alunos | Atual = <span id="metaCountAdequado" style="font-weight:800; color:#2563eb;">0</span> alunos<br>
+                • <strong>Básico (&lt;60%):</strong> Meta = <span id="targetCountBasico">2</span> alunos | Atual = <span id="metaCountBasico" style="font-weight:800; color:#dc2626;">0</span> alunos
               </div>
             </div>
 
             <!-- Gráfico Donut de Meta via Shell -->
             <div>
-              <div style="font-size:0.85rem; font-weight:600; color:#475569; margin-bottom:0.2rem;">Distribuição Atual dos 20 Alunos:</div>
+              <div style="font-size:0.85rem; font-weight:600; color:#475569; margin-bottom:0.2rem;" id="distribTitle">Distribuição Atual dos 20 Alunos:</div>
               <div class="chart-box" id="chartMetaDonut" style="height:170px;"></div>
             </div>
           </div>
@@ -907,7 +1638,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <!-- TABELA CONSOLIDADA DOS 20 ESTUDANTES -->
         <div class="panel">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem;">
-            <h3 style="margin:0; color:#1e3a8a;">📋 Tabela Geral de Estudantes (Turma Completa - 20 Alunos)</h3>
+            <h3 style="margin:0; color:#1e3a8a;" id="mainTableTitle">📋 Tabela Geral de Estudantes (Turma Completa - 20 Alunos)</h3>
             <span class="muted" style="font-size:0.85rem;">Classificação oficial SPAECE</span>
           </div>
           <div class="table-container">
@@ -938,7 +1669,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
   <!-- FOOTER -->
   <footer class="shell-footer" style="text-align:center; padding:1.5rem 1rem; color:#64748b; font-size:0.85rem; border-top:1px solid var(--border); margin-top:3rem;">
-    Sistema de Preparação SPAECE 80/20 — Escola Municipal Francisco Carlos de Pinho — Crateús/CE
+    Sistema de Preparação SPAECE 80/20 — Escola de Cidadania Francisco Carlos de Pinho — Crateús/CE
   </footer>
 
   <!-- SCRIPT INLINE COM DADOS E LÓGICA COMPLETA -->
@@ -947,36 +1678,37 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
        1. CONSTANTES PEDAGÓGICAS E LISTA DE ALUNOS
        ===================================================================== */
     const STUDENTS = [
-      { id: "1001", name: "Aluno 01 — Ana Beatriz de Sousa" },
-      { id: "1002", name: "Aluno 02 — Bruno Vieira Lima" },
-      { id: "1003", name: "Aluno 03 — Camila Rodrigues Silva" },
-      { id: "1004", name: "Aluno 04 — Daniel Alves Bezerra" },
-      { id: "1005", name: "Aluno 05 — Eduarda Cavalcante Freire" },
-      { id: "1006", name: "Aluno 06 — Francisco Érico Pereira" },
-      { id: "1007", name: "Aluno 07 — Gabriela Martins Costa" },
-      { id: "1008", name: "Aluno 08 — Henrique Pinheiro Prado" },
-      { id: "1009", name: "Aluno 09 — Isabela Nascimento Farias" },
-      { id: "1010", name: "Aluno 10 — João Vitor Medeiros" },
-      { id: "1011", name: "Aluno 11 — Kauã Leonardo Chaves" },
-      { id: "1012", name: "Aluno 12 — Letícia Duarte Mendes" },
-      { id: "1013", name: "Aluno 13 — Marcos Vinícius Teles" },
-      { id: "1014", name: "Aluno 14 — Natália Ribeiro Fontes" },
-      { id: "1015", name: "Aluno 15 — Otávio Guimarães Pires" },
-      { id: "1016", name: "Aluno 16 — Paloma Fernandes Soares" },
-      { id: "1017", name: "Aluno 17 — Renan Castro Aragão" },
-      { id: "1018", name: "Aluno 18 — Samara Holanda Frota" },
-      { id: "1019", name: "Aluno 19 — Tiago Mesquita Sales" },
-      { id: "1020", name: "Aluno 20 — Yasmin Carneiro Lima" }
+      { id: "1001", name: "Alice Rodrigues Amancio" },
+      { id: "1002", name: "Ana Júlia Vieira Gomes" },
+      { id: "1003", name: "Antonio Francisco Vieira de Lima" },
+      { id: "1004", name: "Francisca Carolina Venâncio do Nascimento" },
+      { id: "1005", name: "Francisca Myllena Soares Chaves" },
+      { id: "1006", name: "Francisco Erick Vieira Soares" },
+      { id: "1007", name: "Francisco Luan da Silva Andrade" },
+      { id: "1008", name: "Gustavo Henrique de Sousa Barbosa" },
+      { id: "1009", name: "Jamili da Silva Bezerra" },
+      { id: "1010", name: "João Victor Gonçalves da Silva" },
+      { id: "1011", name: "João Vitor de Sousa Alves" },
+      { id: "1012", name: "José Maikon Ferreira Muniz" },
+      { id: "1013", name: "José Wedson Gonçalves Laurentino da Silva" },
+      { id: "1014", name: "Luis Henrique Ximenes Torres" },
+      { id: "1015", name: "Maria Cecília Oliveira Sousa" },
+      { id: "1016", name: "Maria Lauanda Alves Costa" },
+      { id: "1017", name: "Maria Milena de Sousa Machado" },
+      { id: "1018", name: "Maria Rita Coelho da Silva" },
+      { id: "1019", name: "Pedro Carlos Lopes da Silva" },
+      { id: "1020", name: "Rosiane Ximenes de Sousa" },
+      { id: "1021", name: "Vitor Maciel Ribeiro Barbosa" }
     ];
 
     // Níveis por % de acerto acumulado
     const CUTOFF_AVANCADO = 80;
     const CUTOFF_ADEQUADO = 60;
 
-    // Metas de distribuição (70% de 20 = 14; 20% = 4; 10% = 2)
-    const TARGET_AVANCADO_COUNT = 14;
-    const TARGET_ADEQUADO_COUNT = 4;
-    const TARGET_BASICO_COUNT = 2;
+    // Metas de distribuição calculadas proporcionalmente (70% Avançado, 20% Adequado, 10% Básico)
+    const TARGET_AVANCADO_COUNT = Math.round(STUDENTS.length * 0.70); // 15 para 21
+    const TARGET_ADEQUADO_COUNT = Math.round(STUDENTS.length * 0.20); // 4 para 21
+    const TARGET_BASICO_COUNT = STUDENTS.length - TARGET_AVANCADO_COUNT - TARGET_ADEQUADO_COUNT; // 2 para 21
 
     /* =====================================================================
        2. BANCO DE QUESTÕES SPAECE (DIAS 1 A 3: 15 QUESTÕES ORIGINAIS)
@@ -1339,7 +2071,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       },
       {
         day: 5,
-        date: "12/10/2026",
+        date: "13/10/2026",
         descritor: "D03-A",
         title: "Inferir sentido de palavra ou expressão",
         macete: "Macete de Ouro da Substituição Contextual: Não tente lembrar a definição do dicionário isolada! Troque a palavra destacada por cada uma das opções no próprio texto; a resposta certa se encaixa com precisão sem estragar o sentido global.",
@@ -1428,7 +2160,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       },
       {
         day: 6,
-        date: "13/10/2026",
+        date: "14/10/2026",
         descritor: "D03-B",
         title: "Sentidos figurados e expressões idiomáticas",
         macete: "Sentido Próprio (Literal/Denotativo) vs. Sentido Figurado (Conotativo/Metáfora): Não interprete expressões do sertão ou da internet ao pé da letra! Se a frase diz que alguém 'comeu poeira' ou 'entregou a paçoca', a mensagem é figurada e retrata uma situação humana.",
@@ -1519,7 +2251,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     // Gerador de mock dos dias 7 a 40 para a visualização completa dos 40 dias da trilha
     const ALL_40_DAYS = [];
     for (let i = 1; i <= 40; i++) {
-      if (i <= 6) {
+      if (i <= DAYS_DATA.length) {
         ALL_40_DAYS.push(DAYS_DATA[i - 1]);
       } else {
         const cycle = Math.ceil(i / 10);
@@ -1543,9 +2275,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
        3. GERENCIADOR DE ESTADO & LOCALSTORAGE (MOCK REALISTA E PERSISTÊNCIA)
        ===================================================================== */
     const STORAGE_KEY_SESSION = "spaece_session_user_v3";
-    const STORAGE_KEY_STUDENTS_DATA = "spaece_students_data_v3";
-    const STORAGE_KEY_ATTENDANCE = "spaece_attendance_data_v3";
-    const STORAGE_KEY_UNLOCKS = "spaece_unlocks_data_v3";
+    const STORAGE_KEY_STUDENTS_DATA = "spaece_students_data_v4";
+    const STORAGE_KEY_ATTENDANCE = "spaece_attendance_data_v4";
+    const STORAGE_KEY_UNLOCKS = "spaece_unlocks_data_v4";
 
     let currentUser = null; // { role: 'professor'|'aluno'|'coordenador'|'diretor', id, name }
 
@@ -1555,13 +2287,13 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         const initialData = {};
         STUDENTS.forEach((st, idx) => {
           // Gerar perfil pedagógico diferenciado para enriquecer métricas
-          // 14 alunos em Avançado (70%), 4 em Adequado, 2 em Básico
+          // 15 alunos em Avançado (70%), 4 em Adequado, 2 em Básico
           let baseAccuracy = 0.85; // Avançado
           let behaviorType = "avancado";
-          if (idx === 14 || idx === 15 || idx === 16 || idx === 17) {
+          if (idx >= 15 && idx <= 18) {
             baseAccuracy = 0.65; // Adequado
             behaviorType = "adequado";
-          } else if (idx >= 18) {
+          } else if (idx >= 19) {
             baseAccuracy = 0.45; // Básico
             behaviorType = "basico";
           } else if (idx === 3 || idx === 7) {
@@ -1787,8 +2519,8 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       const isStaff = ["professor", "coordenador", "diretor"].includes(currentUser.role);
       const isProf = currentUser.role === "professor";
 
-      document.getElementById("tabProfessorBtn").style.display = isProf ? "inline-block" : "none";
-      document.getElementById("tabDataShowBtn").style.display = isProf ? "inline-block" : "none";
+      document.getElementById("tabProfessorBtn").style.display = isStaff ? "inline-block" : "none";
+      document.getElementById("tabDataShowBtn").style.display = isStaff ? "inline-block" : "none";
       document.getElementById("tabDashboardBtn").style.display = isStaff ? "inline-block" : "none";
 
       const studentBanner = document.getElementById("studentProgressBanner");
@@ -1804,7 +2536,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     }
 
     function switchTab(tabId) {
-      const tabs = ["trilha", "atividade", "professor", "datashow", "dashboard"];
+      const tabs = ["trilha", "atividade", "professor", "dashboard"];
       tabs.forEach(t => {
         const sec = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Section`);
         const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
@@ -1813,8 +2545,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       });
 
       if (tabId === "trilha") renderTrilhaCards();
-      if (tabId === "professor") { renderTeacherDayDetails(); renderTeacherUnlocks(); }
-      if (tabId === "datashow") initDataShow();
+      if (tabId === "professor") { renderTeacherDayDetails(); renderTeacherUnlocks(); renderClassCredentials(); }
       if (tabId === "dashboard") renderManagementDashboard();
     }
 
@@ -1831,18 +2562,26 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         const card = document.createElement("div");
         card.className = "day-card";
 
-        const isImplemented = dayObj.day <= 6;
+        const isImplemented = dayObj.day <= DAYS_DATA.length;
         let isUnlocked = true;
         let isCompleted = false;
         let studentScore = null;
 
         if (currentUser.role === "aluno" && isImplemented) {
+          const completedDays = (currentStudentData && currentStudentData.completedDays) || {};
           const unlockedDays = (currentStudentData && currentStudentData.customUnlockedDays) || [1];
-          // Trava pedagógica: Dia 1 sempre livre ou o dia deve estar nos desbloqueados
-          isUnlocked = unlockedDays.includes(dayObj.day);
-          if (currentStudentData && currentStudentData.completedDays && currentStudentData.completedDays[dayObj.day]) {
+
+          // Trava pedagógica:
+          // 1. Dia 1 sempre liberado.
+          // 2. Dia N+1 libera automaticamente após concluir o Dia N.
+          // 3. Ou se o professor concedeu liberação antecipada (customUnlockedDays).
+          const isPrevCompleted = (dayObj.day === 1) || !!completedDays[dayObj.day - 1];
+          const isTeacherUnlocked = unlockedDays.includes(dayObj.day);
+          isUnlocked = isPrevCompleted || isTeacherUnlocked;
+
+          if (completedDays[dayObj.day]) {
             isCompleted = true;
-            studentScore = currentStudentData.completedDays[dayObj.day].score;
+            studentScore = completedDays[dayObj.day].score;
           }
         }
 
@@ -1880,7 +2619,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
             actionButtonHtml = `
               <div style="display:flex; gap:0.4rem;">
                 <button onclick="startActivity(${dayObj.day})" class="btn" style="flex:1; background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:600; padding:0.5rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">Ver Atividade</button>
-                <button onclick="openDataShowDay(${dayObj.day})" class="btn" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-weight:600; padding:0.5rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">Data Show</button>
+                <button onclick="openDataShowOverlay(${dayObj.day})" class="btn" style="background:#fef3c7; color:#92400e; border:1px solid #fde68a; font-weight:600; padding:0.5rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">Data Show</button>
               </div>
             `;
           }
@@ -1918,8 +2657,12 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         totalScore += me.completedDays[d].score;
         count++;
       }
-      const avg = count > 0 ? Math.round(totalScore / count) : 0;
-      document.getElementById("studentScoreTxt").textContent = `Média: ${avg}% (${getLevelName(avg)})`;
+      if (count === 0) {
+        document.getElementById("studentScoreTxt").textContent = "Média: --% (nenhuma atividade respondida)";
+      } else {
+        const avg = Math.round(totalScore / count);
+        document.getElementById("studentScoreTxt").textContent = `Média: ${avg}% (${getLevelName(avg)})`;
+      }
     }
 
     /* =====================================================================
@@ -1938,7 +2681,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     };
 
     function startActivity(dayNum) {
-      if (dayNum > 6) {
+      if (dayNum > DAYS_DATA.length) {
         alert("Conteúdo em preparação — disponível na próxima atualização.");
         return;
       }
@@ -2150,6 +2893,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     }
 
     function getLevelName(score) {
+      if (score === null || score === undefined || score === "" || score === "--") return "Sem nível calculado";
       if (score >= CUTOFF_AVANCADO) return "Avançado";
       if (score >= CUTOFF_ADEQUADO) return "Adequado";
       return "Básico";
@@ -2162,6 +2906,11 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       const dayNum = parseInt(document.getElementById("teacherDaySelect").value, 10);
       const dayData = DAYS_DATA.find(d => d.day === dayNum);
       if (!dayData) return;
+
+      const badgeCounter = document.getElementById("teacherReleasedCountBadge");
+      if (badgeCounter) {
+        badgeCounter.textContent = `${DAYS_DATA.length} / 40 — Dias liberados`;
+      }
 
       // Plano da aula
       const planBox = document.getElementById("teacherLessonPlan");
@@ -2220,6 +2969,23 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       renderTeacherDayDetails();
     }
 
+    function renderClassCredentials() {
+      const tbody = document.getElementById("credentialsTbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+      STUDENTS.forEach((st, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><code>${st.id}</code></td>
+          <td><strong>${st.name}</strong></td>
+          <td><code style="background:#f1f5f9; padding:0.25rem 0.6rem; border-radius:4px; font-weight:700; color:#1e40af;">aluno2026</code></td>
+          <td><span class="day-badge day-badge-ready">Ativo</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
     function renderTeacherUnlocks() {
       const tbody = document.getElementById("pedagogicLockTbody");
       tbody.innerHTML = "";
@@ -2231,7 +2997,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         const highest = Math.max(...unlocked, 1);
 
         let buttonsHtml = "";
-        for (let d = 2; d <= 6; d++) {
+        for (let d = 2; d <= DAYS_DATA.length; d++) {
           const isAlreadyUnlocked = unlocked.includes(d);
           buttonsHtml += `
             <button onclick="teacherUnlockDay('${st.id}', ${d})" class="btn" style="font-size:0.72rem; padding:0.2rem 0.4rem; margin-right:0.25rem; background:${isAlreadyUnlocked ? '#f1f5f9' : '#dbeafe'}; color:${isAlreadyUnlocked ? '#94a3b8' : '#1e40af'}; border:1px solid #bfdbfe; border-radius:4px; cursor:${isAlreadyUnlocked ? 'default' : 'pointer'};" ${isAlreadyUnlocked ? "disabled" : ""}>
@@ -2279,7 +3045,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       });
 
       if (notDone.length === 0) {
-        box.innerHTML = `<span style="color:#16a34a; font-weight:600;">🎉 Parabéns! Todos os 20 alunos concluíram a atividade do Dia ${dayNum}.</span>`;
+        box.innerHTML = `<span style="color:#16a34a; font-weight:600;">🎉 Parabéns! Todos os ${STUDENTS.length} alunos concluíram a atividade do Dia ${dayNum}.</span>`;
       } else {
         notDone.forEach(st => {
           const pill = document.createElement("span");
@@ -2287,10 +3053,62 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           pill.style.background = "#fee2e2";
           pill.style.color = "#991b1b";
           pill.style.border = "1px solid #fca5a5";
-          pill.textContent = `${st.id} - ${st.name.split(" — ")[1] || st.name}`;
+          pill.textContent = `${st.id} - ${st.name}`;
           box.appendChild(pill);
         });
       }
+    }
+
+    /* =====================================================================
+       LIMPEZA TOTAL DE DADOS DA TURMA (ZERAR REGISTROS DE RESPOSTAS E USO)
+       ===================================================================== */
+    function resetClassData() {
+      // 1ª Confirmação de segurança
+      const firstConfirm = confirm("⚠️ ATENÇÃO: Deseja realmente ZERAR todos os dados da turma?\n\nEsta operação reiniciará o progresso de todos os alunos para o estado inicial do 1º dia.");
+      if (!firstConfirm) return;
+
+      // 2ª Confirmação com o aviso explícito solicitado
+      const secondConfirm = confirm("Esta ação apaga TODAS as respostas registradas. Confirma?");
+      if (!secondConfirm) return;
+
+      executeResetClassData();
+    }
+
+    function executeResetClassData() {
+      // Redefinir registros dos alunos mantendo IDs e nomes intactos
+      const cleanStudents = {};
+      STUDENTS.forEach(st => {
+        cleanStudents[st.id] = {
+          id: st.id,
+          name: st.name,
+          completedDays: {},
+          highestUnlockedDay: 1,
+          customUnlockedDays: [1]
+        };
+      });
+      localStorage.setItem(STORAGE_KEY_STUDENTS_DATA, JSON.stringify(cleanStudents));
+
+      // Redefinir frequência: 100% no ponto de partida inicial
+      const cleanAttendance = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {}, 6: {} };
+      STUDENTS.forEach(st => {
+        for (let d = 1; d <= 6; d++) {
+          cleanAttendance[d][st.id] = true;
+        }
+      });
+      localStorage.setItem(STORAGE_KEY_ATTENDANCE, JSON.stringify(cleanAttendance));
+      localStorage.removeItem(STORAGE_KEY_UNLOCKS);
+
+      // Atualizar todos os painéis para os estados vazios originais
+      renderTrilhaCards();
+      renderTeacherDayDetails();
+      renderTeacherUnlocks();
+      renderClassCredentials();
+      renderManagementDashboard();
+      if (currentUser && currentUser.role === "aluno") {
+        updateStudentProgressBanner();
+      }
+
+      alert("✅ Dados da turma zerados com sucesso!\n\nTodos os registros de respostas, tempos, aproveitamentos e níveis foram reiniciados.");
     }
 
     /* =====================================================================
@@ -2303,20 +3121,29 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     };
 
     function openDataShowDay(dayNum) {
-      dsState.day = dayNum;
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) sel.value = String(dayNum);
+      dsState.day = parseInt(dayNum, 10) || 1;
       dsState.qIndex = 0;
       dsState.revealed = false;
-      document.getElementById("dsDaySelect").value = dayNum;
       switchTab("datashow");
+      renderDataShowQuestion();
     }
 
     function initDataShow() {
-      dsState.day = parseInt(document.getElementById("dsDaySelect").value, 10);
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) {
+        dsState.day = parseInt(sel.value, 10) || 1;
+      }
+      if (dsState.qIndex === undefined) dsState.qIndex = 0;
       renderDataShowQuestion();
     }
 
     function dsChangeDay() {
-      dsState.day = parseInt(document.getElementById("dsDaySelect").value, 10);
+      const sel = document.getElementById("dsDaySelect");
+      if (sel) {
+        dsState.day = parseInt(sel.value, 10) || 1;
+      }
       dsState.qIndex = 0;
       dsState.revealed = false;
       renderDataShowQuestion();
@@ -2426,10 +3253,24 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
     function toggleFullScreen() {
       const el = document.getElementById("datashowCard");
-      if (!document.fullscreenElement) {
-        el.requestFullscreen().catch(() => {});
+      if (!el) return;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (el.requestFullscreen) {
+          el.requestFullscreen().catch(() => {
+            el.classList.toggle("fullscreen-fallback");
+          });
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+        } else {
+          el.classList.toggle("fullscreen-fallback");
+        }
       } else {
-        document.exitFullscreen().catch(() => {});
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+        el.classList.remove("fullscreen-fallback");
       }
     }
 
@@ -2463,7 +3304,8 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           studentTotalQ += (rec.totalQ || 5);
         });
 
-        const avgScore = daysDone.length > 0 ? Math.round(studentTotalScore / daysDone.length) : 0;
+        const hasActivity = daysDone.length > 0;
+        const avgScore = hasActivity ? Math.round(studentTotalScore / daysDone.length) : null;
         const avgTimePerQ = studentTotalQ > 0 ? Math.round(studentTotalTime / studentTotalQ) : 0;
 
         // Frequência
@@ -2475,7 +3317,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         const freqPct = Math.round(((totalDaysTracked - absences) / totalDaysTracked) * 100);
 
         // Tendência (últimas atividades)
-        let tendencia = "Estável";
+        let tendencia = "—";
         if (daysDone.length >= 2) {
           const lastScore = completedDaysObj[daysDone[daysDone.length - 1]].score;
           const prevScore = completedDaysObj[daysDone[daysDone.length - 2]].score;
@@ -2483,6 +3325,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           if (diff >= 15) tendencia = "Alta ↗";
           else if (diff <= -15) tendencia = "Caindo ↘";
           else if (Math.abs(diff) > 25) tendencia = "Oscilando ↕";
+          else tendencia = "Estável";
+        } else if (daysDone.length === 1) {
+          tendencia = "Inicial";
         }
 
         totalScoreSum += studentTotalScore;
@@ -2493,8 +3338,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         return {
           id: st.id,
           name: st.name,
+          hasActivity,
           avgScore,
-          level: getLevelName(avgScore),
+          level: hasActivity ? getLevelName(avgScore) : "Sem nível calculado",
           absences,
           freqPct,
           tendencia,
@@ -2505,10 +3351,26 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         };
       });
 
-      // Distribuição de Níveis
-      let countAvancado = studentMetrics.filter(s => s.avgScore >= CUTOFF_AVANCADO).length;
-      let countAdequado = studentMetrics.filter(s => s.avgScore >= CUTOFF_ADEQUADO && s.avgScore < CUTOFF_AVANCADO).length;
-      let countBasico = studentMetrics.filter(s => s.avgScore < CUTOFF_ADEQUADO).length;
+      // Distribuição de Níveis (somente alunos com respostas registradas)
+      let countAvancado = studentMetrics.filter(s => s.hasActivity && s.avgScore >= CUTOFF_AVANCADO).length;
+      let countAdequado = studentMetrics.filter(s => s.hasActivity && s.avgScore >= CUTOFF_ADEQUADO && s.avgScore < CUTOFF_AVANCADO).length;
+      let countBasico = studentMetrics.filter(s => s.hasActivity && s.avgScore < CUTOFF_ADEQUADO).length;
+
+      const totalStudents = STUDENTS.length;
+      if (document.getElementById("metaVsRealTitle")) {
+        document.getElementById("metaVsRealTitle").textContent = `Meta vs Realidade (${totalStudents} Alunos):`;
+      }
+      if (document.getElementById("distribTitle")) {
+        document.getElementById("distribTitle").textContent = `Distribuição Atual dos ${totalStudents} Alunos:`;
+      }
+      if (document.getElementById("mainTableTitle")) {
+        document.getElementById("mainTableTitle").textContent = `📋 Tabela Geral de Estudantes (Turma Completa - ${totalStudents} Alunos)`;
+      }
+      if (document.getElementById("targetCountAvancado")) {
+        document.getElementById("targetCountAvancado").textContent = TARGET_AVANCADO_COUNT;
+        document.getElementById("targetCountAdequado").textContent = TARGET_ADEQUADO_COUNT;
+        document.getElementById("targetCountBasico").textContent = TARGET_BASICO_COUNT;
+      }
 
       document.getElementById("metaCountAvancado").textContent = countAvancado;
       document.getElementById("metaCountAdequado").textContent = countAdequado;
@@ -2527,16 +3389,16 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       }
 
       // Barra visual de meta
-      const pAvancado = (countAvancado / 20) * 100;
-      const pAdequado = (countAdequado / 20) * 100;
-      const pBasico = (countBasico / 20) * 100;
+      const pAvancado = (countAvancado / totalStudents) * 100;
+      const pAdequado = (countAdequado / totalStudents) * 100;
+      const pBasico = (countBasico / totalStudents) * 100;
       document.getElementById("metaVisualBar").innerHTML = `
         <div class="bar-avancado" style="width:${pAvancado}%;" title="Avançado: ${countAvancado}"></div>
         <div class="bar-adequado" style="width:${pAdequado}%;" title="Adequado: ${countAdequado}"></div>
         <div class="bar-basico" style="width:${pBasico}%;" title="Básico: ${countBasico}"></div>
       `;
 
-      // Gráfico Donut de Meta (Shell API)
+      // Gráfico Donut de Meta via Shell
       const donutBox = document.getElementById("chartMetaDonut");
       donutBox.innerHTML = "";
       if (window.skipChart && window.skipChart.donut) {
@@ -2552,13 +3414,13 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       document.getElementById("kpiMediaGeral").textContent = `${turmaAvg}%`;
 
       const freqTurmaSum = studentMetrics.reduce((acc, s) => acc + s.freqPct, 0);
-      const freqMedia = Math.round(freqTurmaSum / 20);
+      const freqMedia = Math.round(freqTurmaSum / totalStudents);
       document.getElementById("kpiFreqMedia").textContent = `${freqMedia}%`;
 
       const tempoGeralQ = totalQuestionsAnswered > 0 ? Math.round(totalTimeSum / totalQuestionsAnswered) : 0;
       document.getElementById("kpiTempoMedio").textContent = `${tempoGeralQ}s`;
 
-      const maxPossibleActiv = 20 * 6;
+      const maxPossibleActiv = totalStudents * 6;
       const activDone = studentMetrics.reduce((acc, s) => acc + s.daysDoneCount, 0);
       const pctConclusao = Math.round((activDone / maxPossibleActiv) * 100);
       document.getElementById("kpiTaxaParticipacao").textContent = `${pctConclusao}%`;
@@ -2617,7 +3479,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       let dayAverages = [];
       const dayLabels = [
         "D1 (06/10)", "D2 (07/10)", "D3 (08/10)",
-        "D4 (09/10)", "D5 (12/10)", "D6 (13/10)"
+        "D4 (09/10)", "D5 (13/10)", "D6 (14/10)"
       ];
 
       for (let d = 1; d <= 6; d++) {
@@ -2657,9 +3519,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
       studentMetrics.forEach(s => {
         // Estáveis no Avançado: média >= 80%
-        if (s.avgScore >= CUTOFF_AVANCADO) {
+        if (s.hasActivity && s.avgScore >= CUTOFF_AVANCADO) {
           const li = document.createElement("li");
-          li.innerHTML = `<strong>${s.name.split(" — ")[1] || s.name}</strong> (${s.avgScore}%)`;
+          li.innerHTML = `<strong>${s.name}</strong> (${s.avgScore}%)`;
           ulEstaveis.appendChild(li);
         }
 
@@ -2674,14 +3536,15 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         }
         if (isOscilante) {
           const li = document.createElement("li");
-          li.innerHTML = `<strong>${s.name.split(" — ")[1] || s.name}</strong> (Oscilou ${s.avgScore}%)`;
+          li.innerHTML = `<strong>${s.name}</strong> (Oscilou ${s.avgScore}%)`;
           ulOscilantes.appendChild(li);
         }
 
-        // Em Risco: Frequência < 75% OU 2+ faltas OU média < 60%
-        if (s.freqPct < 75 || s.absences >= 2 || s.avgScore < CUTOFF_ADEQUADO) {
+        // Em Risco: Frequência < 75% OU 2+ faltas OU média < 60% (somente com atividade)
+        if (s.freqPct < 75 || s.absences >= 2 || (s.hasActivity && s.avgScore < CUTOFF_ADEQUADO)) {
           const li = document.createElement("li");
-          li.innerHTML = `<strong>${s.name.split(" — ")[1] || s.name}</strong> (Freq: ${s.freqPct}%, Média: ${s.avgScore}%)`;
+          const scoreTxt = s.hasActivity ? `, Média: ${s.avgScore}%` : "";
+          li.innerHTML = `<strong>${s.name}</strong> (Freq: ${s.freqPct}%${scoreTxt})`;
           ulRisco.appendChild(li);
         }
 
@@ -2694,10 +3557,11 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       if (!ulOscilantes.children.length) ulOscilantes.innerHTML = `<li class="muted">Turma com estabilidade</li>`;
       if (!ulRisco.children.length) ulRisco.innerHTML = `<li class="muted" style="color:#16a34a;">Nenhum aluno em risco no momento</li>`;
 
+      const hasAnyActivity = studentMetrics.some(s => s.hasActivity);
       timeAlertBox.innerHTML = `
         • <strong>Respostas Muito Rápidas (&lt;15s por questão):</strong> ${countFastAlert} aluno(s). <em>Possível comportamento de chute ou desatenção textual.</em><br>
         • <strong>Respostas Muito Lentas (&gt;3min por questão):</strong> ${countSlowAlert} aluno(s). <em>Sinal de sobrecarga cognitiva ou hesitação na leitura.</em><br>
-        • <strong>Média global da turma:</strong> 38 a 52 segundos por item (padrão de leitura adequado para a matriz SPAECE).
+        • <strong>Média global da turma:</strong> ${hasAnyActivity ? "38 a 52 segundos por item (padrão de leitura adequado para a matriz SPAECE)." : "Nenhuma resposta registrada ainda (turma zerada)."}
       `;
     }
 
@@ -2711,18 +3575,21 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         let levelBadge = "";
         if (s.level === "Avançado") levelBadge = `<span class="day-badge" style="background:#dcfce7; color:#166534; font-weight:800;">Avançado</span>`;
         else if (s.level === "Adequado") levelBadge = `<span class="day-badge" style="background:#dbeafe; color:#1e40af; font-weight:800;">Adequado</span>`;
-        else levelBadge = `<span class="day-badge" style="background:#fee2e2; color:#991b1b; font-weight:800;">Básico</span>`;
+        else if (s.level === "Básico") levelBadge = `<span class="day-badge" style="background:#fee2e2; color:#991b1b; font-weight:800;">Básico</span>`;
+        else levelBadge = `<span class="day-badge" style="background:#f1f5f9; color:#64748b; font-weight:700;">Sem nível calculado</span>`;
 
-        let timeBadge = `${s.avgTimePerQ}s`;
-        if (s.avgTimePerQ < 15 && s.avgTimePerQ > 0) timeBadge += ` ⚠️ Chute`;
-        if (s.avgTimePerQ > 180) timeBadge += ` 🐢 Lento`;
+        let timeBadge = s.hasActivity ? `${s.avgTimePerQ}s` : "—";
+        if (s.hasActivity && s.avgTimePerQ < 15 && s.avgTimePerQ > 0) timeBadge += ` ⚠️ Chute`;
+        if (s.hasActivity && s.avgTimePerQ > 180) timeBadge += ` 🐢 Lento`;
+
+        const scoreDisplay = s.hasActivity ? `${s.avgScore}%` : `<span class="muted" style="font-size:0.8rem;">nenhuma atividade respondida</span>`;
 
         tr.innerHTML = `
           <td><code>${s.id}</code></td>
           <td><strong>${s.name}</strong></td>
           <td class="num">${s.freqPct}%</td>
           <td class="num">${s.absences}</td>
-          <td class="num" style="font-weight:700;">${s.avgScore}%</td>
+          <td class="num" style="font-weight:700;">${scoreDisplay}</td>
           <td>${levelBadge}</td>
           <td>${s.tendencia}</td>
           <td class="num">${timeBadge}</td>
@@ -2755,15 +3622,16 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           totalQ += (completed[d].totalQ || 5);
         });
 
-        const avgScore = days.length > 0 ? Math.round(sumScore / days.length) : 0;
-        const avgTime = totalQ > 0 ? Math.round(sumTime / totalQ) : 0;
+        const hasAct = days.length > 0;
+        const avgScore = hasAct ? Math.round(sumScore / days.length) : "--";
+        const avgTime = totalQ > 0 ? Math.round(sumTime / totalQ) : "--";
 
         let absences = 0;
         for (let d = 1; d <= 6; d++) {
           if (attendance[d] && attendance[d][st.id] === false) absences++;
         }
         const freqPct = Math.round(((6 - absences) / 6) * 100);
-        const level = getLevelName(avgScore);
+        const level = hasAct ? getLevelName(avgScore) : "Sem nível calculado";
         const trilhaPct = Math.round((days.length / 40) * 100);
 
         const cleanName = st.name.replace(/,/g, " ");
